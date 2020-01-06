@@ -1,0 +1,7 @@
+com/dg/maven/easyReplication/Test.class
+com/dg/maven/easyReplication/Column.class
+com/dg/maven/easyReplication/EasyReplication.class
+com/dg/maven/easyReplication/Snapshot.class
+com/dg/maven/easyReplication/Relation.class
+com/dg/maven/easyReplication/Stream.class
+com/dg/maven/easyReplication/Decode.class
