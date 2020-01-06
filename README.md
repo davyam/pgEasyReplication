@@ -94,9 +94,7 @@ boolean messagePretty = false;
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
 			
 pgEasyReplication.initializeLogicalReplication();
-```			
-	
-```
+
 // Print snapshot
 
 System.out.println("TEST: Printing snapshot ...");
