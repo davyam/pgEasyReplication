@@ -14,34 +14,36 @@ public class UnitTest {
 			
 			// OBS: Execute the pre_unit_test_postgresql.sql script on database before this test!
 
-			// Variables
+			// Parameters (REPLACE VALUES)
+		
+			String pgServer = "192.168.32.51";		// PostgreSQL server (IP or hostname)
+			String pgPort = "5432";					// PostgreSQL port
+			String pgDatabase = "test";				// PostgreSQL database
+			String pgSSL = "false";					// PostgreSQL SSL connection (true or false)
+			String pgUser = "postgres";				// PostgreSQL user
+			String pgPassword = "";					// PostgreSQL user password
+			String pgPublication = "cidade_pub";	// PostgreSQL publication
+			boolean messagePretty = true;			// JSON data change pretty (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 			
-			String pgServer = "192.168.32.51";
-			String pgPort = "5432";
-			String pgDatabase = "test";
-			String pgSSL = "false";
-			String pgUser = "postgres";
-			String pgPassword = "";
-			String pgPublication = "cidade_pub";
-			boolean messagePretty = false;
 			
+			// Instantiate pgEasyReplication class		
 			
-			// Initialize Logical Replication		
-
 			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
 			
-			pgEasyReplication.initializeLogicalReplication();
 			
-			
-			// Print snapshot
-			
-			System.out.println("TEST: Printing snapshot ...");
+			// Snapshot
 			
 			LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+			
+			System.out.println("TEST: Printing snapshot ...");
 			
 			for (String snapshot : snapshots) {
 				System.out.println(snapshot);
 			}
+			
+			// Initialize logical replication
+			
+			pgEasyReplication.initializeLogicalReplication();
 			
 
 			// Making data changes
@@ -72,12 +74,12 @@ public class UnitTest {
 			st.close();
 			
 			
-			// Print data changes
+			// Capture data changes
 
-			while (true) {
-				System.out.println("TEST: Printing data changes ...");
-				
+			while (true) {	
 				LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
+				
+				System.out.println("TEST: Printing data changes ...");
 				
 				for (String change : changes) {
 					System.out.println(change);

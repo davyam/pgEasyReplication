@@ -15,6 +15,17 @@ public class PGEasyReplication {
 	private String slot;
 	private Stream stream;
 
+	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub) {
+		
+		Datasource.setProperties(server, port, database, ssl, user, password);
+		Datasource.createSQLConnection();
+		Datasource.createReplicationConnection();
+
+		this.publication = pub;
+		this.slot = "easy_slot_" + pub;
+		this.messagePretty = true;
+	}
+	
 	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub, boolean pretty) {
 		
 		Datasource.setProperties(server, port, database, ssl, user, password);
