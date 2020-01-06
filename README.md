@@ -58,16 +58,16 @@ After configurations, restart/reload PostgreSQL service.
 How to use
 ==========
 
-SQL
----
+PostgreSQL
+----------
 
-First, you need a Publication for the tables that you want to capture data changes.
+First, you need a Publication for the tables that you want to capture data changes:
 
 ```
 CREATE PUBLICATION cidade_pub FOR TABLE cidade;
 ```
 
-OBS: A published table must have a “replica identity” configured in order to be able to replicate UPDATE and DELETE operations, so that appropriate rows to update or delete can be identified on the subscriber side. By default, this is the primary key, if there is one. Another unique index (with certain additional requirements) can also be set to be the replica identity. If the table does not have any suitable key, then it can be set to replica identity “full”, which means the entire row becomes the key. This, however, is very inefficient and should only be used as a fallback if no other solution is possible.
+**OBS**: A published table must have a “replica identity” configured in order to be able to replicate UPDATE and DELETE operations, so that appropriate rows to update or delete can be identified on the subscriber side. By default, this is the primary key, if there is one. Another unique index (with certain additional requirements) can also be set to be the replica identity. If the table does not have any suitable key, then it can be set to replica identity “full”, which means the entire row becomes the key. This, however, is very inefficient and should only be used as a fallback if no other solution is possible.
 
 More details:
 https://www.postgresql.org/docs/10/logical-replication-publication.html
@@ -75,6 +75,9 @@ https://www.postgresql.org/docs/10/logical-replication-publication.html
 Java
 ----
 
+In your Java code, import the pgEasyReplicaton library.
+
+Then, initialize the Logical Replication:
 
 ```
 // Parameters
@@ -88,30 +91,35 @@ String pgPassword = "";
 String pgPublication = "cidade_pub";
 boolean messagePretty = false;
 
-
 // Initialize Logical Replication		
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
 			
 pgEasyReplication.initializeLogicalReplication();
+```
 
-// Print snapshot
+To get a snapshot of the published tables:
 
-System.out.println("TEST: Printing snapshot ...");
+```
+
 
 LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+
+System.out.println("TEST: Printing snapshot ...");
 
 for (String snapshot : snapshots) {
   System.out.println(snapshot);
 }
+```
 
-// Print data changes
+To capture data changes:
 
+```
 while (true) {
-	System.out.println("TEST: Printing data changes ...");
-
 	LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
 
+	System.out.println("TEST: Printing data changes ...");
+	
 	for (String change : changes) {
 		System.out.println(change);
 	}
@@ -123,7 +131,6 @@ while (true) {
 	}
 
 }
-
 ```
 
 License
