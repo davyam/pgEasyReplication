@@ -71,12 +71,10 @@ https://www.postgresql.org/docs/10/logical-replication-publication.html
 Java
 ----
 
-In your Java code, import the pgEasyReplicaton library.
+In your Java code, **import the pgEasyReplicaton library**.
 
-Then, instantiate the PGEasyReplication class with PostgreSQL server connection parameters and publication name:
-```
-// Parameters
-			
+Then, **instantiate the PGEasyReplication class** with PostgreSQL server connection parameters and publication name:
+```			
 String pgServer = "192.168.32.51";	// PostgreSQL server (IP or hostname)
 String pgPort = "5432";			// PostgreSQL port
 String pgDatabase = "test";		// PostgreSQL database
@@ -86,12 +84,10 @@ String pgPassword = "123123";		// PostgreSQL user password
 String pgPublication = "cidade_pub";	// PostgreSQL publication
 boolean messagePretty = true;		// Default is true. Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
 
-// Instantiate pgEasyReplication class	
-
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
 ```
 
-To get a snapshot of the published tables:
+To get a **snapshot** of the published tables:
 ```
 LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
 ```
@@ -108,13 +104,9 @@ Output:
 {"snaphost":{"public.cidade":["{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}","{"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}","{"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}"]}}
 ```
 
-To capture data changes in published tables:
+To **capture data changes** in published tables:
 ```
-// Initialize Logical Replication
-
 pgEasyReplication.initializeLogicalReplication();
-
-// Reading and decode Logical Replication Slot
 	
 LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
 ```
