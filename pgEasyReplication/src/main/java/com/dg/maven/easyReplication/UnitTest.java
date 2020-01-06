@@ -32,6 +32,17 @@ public class UnitTest {
 			
 			pgEasyReplication.initializeLogicalReplication();
 			
+			
+			// Print snapshot
+			
+			System.out.println("TEST: Printing snapshot ...");
+			
+			LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+			
+			for (String snapshot : snapshots) {
+				System.out.println(snapshot);
+			}
+			
 
 			// Making data changes
 			
@@ -57,17 +68,6 @@ public class UnitTest {
 	    	st.execute("DELETE FROM cidade WHERE codigo >= 4;");
 	    	
 			st.close();
-
-			
-			// Print snapshot
-			
-			System.out.println("TEST: Printing snapshot ...");
-			
-			LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
-			
-			for (String snapshot : snapshots) {
-				System.out.println(snapshot);
-			}
 			
 			
 			// Print data changes
