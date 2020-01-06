@@ -1,8 +1,6 @@
 # pgEasyReplication
 
-pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) in PostgreSQL tables via Logical Replication.
-
-Also, the library provides snapshots of all tables covered by a Publication.
+pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) in PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
 
 All the data are returned in JSON format.
 
@@ -14,6 +12,7 @@ pgEasyReplicaton uses PostgreSQL Replication API to create a replication slot th
 Requirements
 ============
 
+* Java 8+
 * PostgreSQL 10+
 
 Configuration
@@ -77,7 +76,7 @@ Java
 
 In your Java code, import the pgEasyReplicaton library.
 
-Then, initialize the Logical Replication:
+Then, instantiate the class PGEasyReplication with PostgreSQL server connection parameters and publication name:
 
 ```
 // Parameters
@@ -89,23 +88,21 @@ String pgSSL = "false";
 String pgUser = "postgres";
 String pgPassword = "";
 String pgPublication = "cidade_pub";
-boolean messagePretty = false;
+boolean messagePretty = true; 		// Default is true. Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
 
-// Initialize Logical Replication		
+// Instantiate pgEasyReplication class	
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
-			
-pgEasyReplication.initializeLogicalReplication();
 ```
 
 To get a snapshot of the published tables:
 
 ```
-
-
 LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
 
 System.out.println("TEST: Printing snapshot ...");
+
+// Printing to console
 
 for (String snapshot : snapshots) {
   System.out.println(snapshot);
@@ -115,21 +112,20 @@ for (String snapshot : snapshots) {
 To capture data changes:
 
 ```
-while (true) {
-	LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
+// Initialize Logical Replication
 
-	System.out.println("TEST: Printing data changes ...");
+pgEasyReplication.initializeLogicalReplication();
+
+// Reading and decode Logical Replication Slot
 	
-	for (String change : changes) {
-		System.out.println(change);
-	}
+LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
 
-	try {
-		Thread.sleep(3000);	// Sleep 3 seconds
-	} catch (InterruptedException ex) {
-		ex.printStackTrace();
-	}
+// Printing to console
 
+System.out.println("TEST: Printing data changes ...");
+
+for (String change : changes) {
+	System.out.println(change);
 }
 ```
 
