@@ -29,7 +29,6 @@ Your database should be configured to enable logical replication.
 * Property **max_replication_slots** should be greater than zero for logical replication, because logical replication can't work without replication slot.
 
 Example:
-
 ```
 max_wal_senders = 4             # max number of walsender processes
 wal_keep_segments = 4           # in logfile segments, 16MB each; 0 disables
@@ -45,7 +44,6 @@ pg_hba.conf
 Enable connect user with replication privileges to replication stream.
 
 Example:
-  
 ```
 local   replication   all                   trust
 host    replication   all   192.168.32.0/24 md5
@@ -54,14 +52,13 @@ host    replication   all   ::1/128         md5
 
 After configurations, restart/reload PostgreSQL service.
 
-How to use
-==========
+Example
+=======
 
 PostgreSQL
 ----------
 
 First, you need a Publication for the tables that you want to capture data changes:
-
 ```
 CREATE PUBLICATION cidade_pub FOR TABLE cidade;
 ```
@@ -76,19 +73,18 @@ Java
 
 In your Java code, import the pgEasyReplicaton library.
 
-Then, instantiate the class PGEasyReplication with PostgreSQL server connection parameters and publication name:
-
+Then, instantiate the PGEasyReplication class with PostgreSQL server connection parameters and publication name:
 ```
 // Parameters
 			
-String pgServer = "192.168.32.51";
-String pgPort = "5432";
-String pgDatabase = "test";
-String pgSSL = "false";
-String pgUser = "postgres";
-String pgPassword = "";
-String pgPublication = "cidade_pub";
-boolean messagePretty = true; 		// Default is true. Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
+String pgServer = "192.168.32.51";	// PostgreSQL server (IP or hostname)
+String pgPort = "5432";			// PostgreSQL port
+String pgDatabase = "test";		// PostgreSQL database
+String pgSSL = "false";			// PostgreSQL SSL connection (true or false)
+String pgUser = "postgres";		// PostgreSQL user
+String pgPassword = "123123";		// PostgreSQL user password
+String pgPublication = "cidade_pub";	// PostgreSQL publication
+boolean messagePretty = true;		// Default is true. Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
 
 // Instantiate pgEasyReplication class	
 
@@ -96,21 +92,23 @@ PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pg
 ```
 
 To get a snapshot of the published tables:
-
 ```
 LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+```
 
-System.out.println("TEST: Printing snapshot ...");
-
-// Printing to console
-
+Printing snapshot:
+```
 for (String snapshot : snapshots) {
   System.out.println(snapshot);
 }
 ```
 
-To capture data changes:
+Output:
+```
+{"snaphost":{"public.cidade":["{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}","{"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}","{"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}"]}}
+```
 
+To capture data changes in published tables:
 ```
 // Initialize Logical Replication
 
@@ -119,14 +117,34 @@ pgEasyReplication.initializeLogicalReplication();
 // Reading and decode Logical Replication Slot
 	
 LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
+```
 
-// Printing to console
-
-System.out.println("TEST: Printing data changes ...");
-
+Printing data changes:
+```
 for (String change : changes) {
 	System.out.println(change);
 }
+```
+
+Output with messagePretty = true (default):
+```
+{"begin":"begin"}
+{"insert":{"cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
+{"commit":"commit"}
+{"begin":"begin"}
+{"update":{"cidade":{"codigo":20,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
+{"commit":"commit"}
+```
+
+Output with messagePretty = false:
+```
+{"begin":{"xid":859,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","xLSNFinal":24202080}}
+{"relation":{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"namespaceName":"public","numColumns":3}}
+{"insert":{"tupleData":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType":"N"}}
+{"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202080,"xLSNEnd":24202128}}
+{"begin":{"xid":860,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","xLSNFinal":24202240}}
+{"update":{"tupleType2":"N","tupleData1":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"tupleData2":{"values":"(20,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType1":"O"}}
+{"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202240,"xLSNEnd":24202288}}
 ```
 
 License
