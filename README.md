@@ -73,7 +73,7 @@ Java
 
 In your Java code, **import the pgEasyReplicaton library**.
 
-Then, **instantiate the PGEasyReplication class** with PostgreSQL server connection parameters and publication name:
+Then, **instantiate the PGEasyReplication class**:
 ```			
 String pgServer = "192.168.32.51";	// PostgreSQL server (IP or hostname)
 String pgPort = "5432";			// PostgreSQL port
@@ -82,11 +82,11 @@ String pgSSL = "false";			// PostgreSQL SSL connection (true or false)
 String pgUser = "postgres";		// PostgreSQL user
 String pgPassword = "123123";		// PostgreSQL user password
 String pgPublication = "cidade_pub";	// PostgreSQL publication
-boolean messagePretty = true;		// Default is true. Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
+boolean messagePretty = true;		// JSON data change pretty (default is true). Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
 ```
-
+----------
 To get a **snapshot** of the published tables:
 ```
 LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
@@ -103,7 +103,7 @@ Output:
 ```
 {"snaphost":{"public.cidade":["{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}","{"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}","{"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}"]}}
 ```
-
+----------
 To **capture data changes** in published tables:
 ```
 pgEasyReplication.initializeLogicalReplication();
@@ -138,6 +138,8 @@ Output with messagePretty = false:
 {"update":{"tupleType2":"N","tupleData1":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"tupleData2":{"values":"(20,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType1":"O"}}
 {"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202240,"xLSNEnd":24202288}}
 ```
+----------
+In our enviorment, if you whish, you can adjusts in UnitTest.java file to run a simple unit dev test.
 
 License
 =======
