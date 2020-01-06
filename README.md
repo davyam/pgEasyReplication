@@ -63,10 +63,20 @@ First, you need a Publication for the tables that you want to capture data chang
 CREATE PUBLICATION cidade_pub FOR TABLE cidade;
 ```
 
-**OBS**: A published table must have a “replica identity” configured in order to be able to replicate UPDATE and DELETE operations, so that appropriate rows to update or delete can be identified on the subscriber side. By default, this is the primary key, if there is one. Another unique index (with certain additional requirements) can also be set to be the replica identity. If the table does not have any suitable key, then it can be set to replica identity “full”, which means the entire row becomes the key. This, however, is very inefficient and should only be used as a fallback if no other solution is possible.
+**OBS**: A published table must have a “replica identity” configured in order to be able to replicate UPDATE and DELETE operations, so that appropriate rows to update or delete can be identified on the subscriber side. By default, this is the primary key, if there is one. Another unique index (with certain additional requirements) can also be set to be the replica identity. If the table does not have any suitable key, then it can be set to replica identity “full”, which means the entire row becomes the key. This, however, is very inefficient and should only be used as a fallback if no other solution is possible. More details: https://www.postgresql.org/docs/10/logical-replication-publication.html
 
-More details:
-https://www.postgresql.org/docs/10/logical-replication-publication.html
+Table struct:
+
+```
+                Table "public.cidade"
+  Column   |  Type   | Collation | Nullable | Default
+-----------+---------+-----------+----------+---------
+ codigo    | integer |           | not null |
+ data_fund | date    |           | not null |
+ nome      | text    |           |          |
+Publications:
+    "cidade_pub"
+```
 
 Java
 ----
