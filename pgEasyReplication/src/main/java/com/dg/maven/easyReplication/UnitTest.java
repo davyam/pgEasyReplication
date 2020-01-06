@@ -23,13 +23,12 @@ public class UnitTest {
 			String pgUser = "postgres";				// PostgreSQL user
 			String pgPassword = "";					// PostgreSQL user password
 			String pgPublication = "cidade_pub";	// PostgreSQL publication
-			boolean messagePretty = true;			// JSON data change pretty (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
+			boolean messagePretty = false;			// JSON data change pretty (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 			
 			
 			// Instantiate pgEasyReplication class		
 			
 			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
-			
 			
 			// Snapshot
 			
