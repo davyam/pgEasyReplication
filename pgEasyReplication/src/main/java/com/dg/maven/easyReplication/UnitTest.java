@@ -61,6 +61,8 @@ public class UnitTest {
 			
 			conn.setAutoCommit(true);
 			Statement st = conn.createStatement();
+			
+			System.out.println("TEST: Changing data ...");
 
 	    	st.execute("INSERT INTO cidade (codigo, data_fund, nome) VALUES (4, '1929-10-19', 'UBERLANDIA');");
 	    	st.execute("UPDATE cidade SET codigo = 20 WHERE codigo = 4;");
