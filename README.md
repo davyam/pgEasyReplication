@@ -149,7 +149,7 @@ Output with messagePretty = false:
 {"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202240,"xLSNEnd":24202288}}
 ```
 ----------
-In our enviorment, if you whish, you can adjust UnitTest.java file to run a simple unit dev test.
+In our environment, if you whish, you can adjust UnitTest.java file to run a simple unit dev test.
 
 License
 =======
