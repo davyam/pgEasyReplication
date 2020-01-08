@@ -81,7 +81,7 @@ Publications:
 Java
 ----
 
-In your Java code, **import the pgEasyReplicaton library**.
+In your Java code, **import the pgEasyReplicaton package**.
 
 Then, **instantiate the PGEasyReplication class**:
 ```			
