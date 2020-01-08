@@ -1,4 +1,4 @@
-package com.dg.maven.easyReplication;
+package com.dg.easyReplication;
 
 import java.util.HashMap;
 
