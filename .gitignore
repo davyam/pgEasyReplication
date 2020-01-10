@@ -1,2 +1,18 @@
-/target/
-*.DS_Store
+target
+.project
+.settings
+.classpath
+nbactions.xml
+nb-configuration.xml
+.DS_Store
+.metadata
+.recommenders
+
+# Intellij
+.idea/
+*.iml
+*.iws
+*~
+
+#Visual Studio
+.vscode/
