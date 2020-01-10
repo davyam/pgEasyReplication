@@ -25,6 +25,10 @@ public class Datasource {
 		Datasource.database = database;
 		Datasource.ssl = ssl;
 		Datasource.user = user;
+		
+		if(password == null) {
+			password = "";
+		}
 		Datasource.password = password;
 	}
 	
