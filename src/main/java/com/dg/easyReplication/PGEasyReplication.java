@@ -11,16 +11,11 @@ import org.postgresql.PGConnection;
 public class PGEasyReplication {
 
 	private String publication;
-	private boolean messagePretty;
+	private boolean eventSimple;
 	private String slot;
 	private Stream stream;
-
-	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub) {
-		
-		this(server, port, database, ssl, user, password, pub, true);
-	}
 	
-	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub, boolean pretty) {
+	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub, boolean simple) {
 		
 		Datasource.setProperties(server, port, database, ssl, user, password);
 		Datasource.createSQLConnection();
@@ -28,7 +23,11 @@ public class PGEasyReplication {
 
 		this.publication = pub;
 		this.slot = "easy_slot_" + pub;
-		this.messagePretty = pretty;
+		this.eventSimple = simple;
+	}
+	
+	public PGEasyReplication(String server, String port, String database, String ssl, String user, String password, String pub) {
+		this(server, port, database, ssl, user, password, pub, true);
 	}
 
 	public void initializeLogicalReplication() {
@@ -90,7 +89,7 @@ public class PGEasyReplication {
 
 		try {			
 			if(this.stream == null)	{			
-				this.stream = new Stream(this.publication, this.slot, this.messagePretty);
+				this.stream = new Stream(this.publication, this.slot, this.eventSimple);
 			}
 				
 			readMessageQueue = this.stream.readStream();

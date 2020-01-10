@@ -14,27 +14,44 @@ import org.postgresql.replication.PGReplicationStream;
 
 public class Stream {
 
-	private boolean messagePretty;		
+	private boolean eventSimple;		
 	private PGReplicationStream repStream;
 	private Decode decode;
 
-	public Stream(String pub, String slt, boolean pretty) throws SQLException {
+	public Stream(String pub, String slt, boolean simple, String lsn) throws SQLException {
 
 		PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
 		
 		// More details about pgoutput plugin: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
 
-		this.repStream = pgcon.getReplicationAPI()
-				.replicationStream()
-				.logical()
-				.withSlotName(slt)
-				.withSlotOption("proto_version", "1")
-				.withSlotOption("publication_names", pub)
-				.withStatusInterval(1, TimeUnit.SECONDS)
-				.start();
-		
-		this.messagePretty = pretty;
+		if(lsn == null) {
+			this.repStream = pgcon.getReplicationAPI()
+					.replicationStream()
+					.logical()
+					.withSlotName(slt)
+					.withSlotOption("proto_version", "1")
+					.withSlotOption("publication_names", pub)
+					.withStatusInterval(1, TimeUnit.SECONDS)
+					.start();
+		} else {			
+			this.repStream = pgcon.getReplicationAPI()
+					.replicationStream()
+					.logical()
+					.withSlotName(slt)
+					.withSlotOption("proto_version", "1")
+					.withSlotOption("publication_names", pub)
+					.withStatusInterval(1, TimeUnit.SECONDS)
+					.withStartPosition(LogSequenceNumber.valueOf(lsn))
+					.start();
+		}
+			
+		this.eventSimple = simple;
 	}
+	
+	public Stream(String pub, String slt, boolean pretty) throws SQLException {
+		this(pub, slt, pretty, null);
+	}
+	
 
 	public LinkedList<String> readStream()
 			throws SQLException, InterruptedException, ParseException, UnsupportedEncodingException {
@@ -57,8 +74,8 @@ public class Stream {
 			
 			String message = "";
 
-			if (this.messagePretty) {
-				message = this.decode.decodeLogicalReplicationMessagePretty(buffer, json).toJSONString();
+			if (this.eventSimple) {
+				message = this.decode.decodeLogicalReplicationMessageSimple(buffer, json).toJSONString();
 			} else {
 				message = this.decode.decodeLogicalReplicationMessage(buffer, json).toJSONString().replace("\\\"", "\"");
 			}

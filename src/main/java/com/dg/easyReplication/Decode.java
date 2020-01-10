@@ -247,7 +247,7 @@ public class Decode {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public JSONObject decodeLogicalReplicationMessagePretty(ByteBuffer buffer, JSONObject json) throws ParseException, SQLException, UnsupportedEncodingException {
+	public JSONObject decodeLogicalReplicationMessageSimple(ByteBuffer buffer, JSONObject json) throws ParseException, SQLException, UnsupportedEncodingException {
 		
         char msgType = (char) buffer.get(0); 													/* (Byte1) Identifies the message as a begin message. */
         int position = 1;
@@ -335,7 +335,7 @@ public class Decode {
 	        position += 1;																		/* (Byte1) Identifies the following TupleData message as a new tuple ('N'). */
 	        
 	        jsonMessage_I.put(this.relations.get(relationId_I).getName(), 
-	        		parseTupleDataPretty(relationId_I, buffer, position)[0]);				
+	        		parseTupleDataSimple(relationId_I, buffer, position)[0]);				
 	        	        
 			json.put("insert", jsonMessage_I);
 			return json;
@@ -350,7 +350,7 @@ public class Decode {
 			char tupleType1 = (char) buffer.get(position);										/* (Byte1) Either identifies the following TupleData submessage as a key ('K') or as an old tuple ('O') or as a new tuple ('N'). */
 			position += 1;
 
-			Object[] tupleData1 = parseTupleDataPretty(relationId_U, buffer, position);			/* TupleData N, K or O */
+			Object[] tupleData1 = parseTupleDataSimple(relationId_U, buffer, position);			/* TupleData N, K or O */
 			
 			if (tupleType1 == 'N') {
 				jsonMessage_U.put(this.relations.get(relationId_U).getName(), tupleData1[0]);
@@ -363,7 +363,7 @@ public class Decode {
 			position += 1;																		/* (Byte1) Either identifies the following TupleData submessage as a key ('K') or as an old tuple ('O') or as a new tuple ('N'). */
 			
 			jsonMessage_U.put(this.relations.get(relationId_U).getName(), 
-					parseTupleDataPretty(relationId_U, buffer, position)[0]);					/* TupleData N */
+					parseTupleDataSimple(relationId_U, buffer, position)[0]);					/* TupleData N */
 			
 			json.put("update", jsonMessage_U);
 			return json;	
@@ -378,7 +378,7 @@ public class Decode {
 			position += 1;																		/* (Byte1) Either identifies the following TupleData submessage as a key ('K') or as an old tuple ('O'). */
 			
 			jsonMessage_D.put(this.relations.get(relationId_D).getName(), 
-					parseTupleDataPretty(relationId_D, buffer, position)[0]);					/* TupleData */
+					parseTupleDataSimple(relationId_D, buffer, position)[0]);					/* TupleData */
 			
 			json.put("delete", jsonMessage_D);
 			return json;
@@ -391,7 +391,7 @@ public class Decode {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object[] parseTupleDataPretty(int relationId, ByteBuffer buffer, int position) throws SQLException, UnsupportedEncodingException {
+	public Object[] parseTupleDataSimple(int relationId, ByteBuffer buffer, int position) throws SQLException, UnsupportedEncodingException {
 		
 		JSONObject json = new JSONObject();
 		Object[] result = {json, position};
