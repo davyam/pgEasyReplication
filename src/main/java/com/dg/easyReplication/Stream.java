@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 import org.postgresql.PGConnection;
+import org.postgresql.replication.LogSequenceNumber;
 import org.postgresql.replication.PGReplicationStream;
 
 public class Stream {
@@ -71,5 +72,9 @@ public class Stream {
 		}
 
 		return messageQueue;
+	}
+	
+	public LogSequenceNumber getLastReceiveLSN() {
+		return this.repStream.getLastReceiveLSN();
 	}
 }
