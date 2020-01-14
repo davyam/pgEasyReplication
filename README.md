@@ -94,9 +94,8 @@ String pgPassword = "123123";			// PostgreSQL user password
 String pgPublication = "cidade_pub";		// PostgreSQL publication
 String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
 boolean slotDropIfExists = true;		// PostgreSQL slot name (OPTIONAL)
-boolean eventSimple = false;			// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 
-PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists, eventSimple);
+PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 ```
 ----------
 To get a **snapshot** of the published tables:
@@ -119,8 +118,10 @@ Output:
 To **capture data changes** in published tables:
 ```
 pgEasyReplication.initializeLogicalReplication();
+
+boolean isSimpleEvent = true;	// Simple JSON data change (DEFAULT is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
 	
-Event event = pgEasyReplication.readEvent();
+Event event = pgEasyReplication.readEvent(isSimpleEvent);
 
 LinkedList<String> changes = event.getChanges();
 ```
