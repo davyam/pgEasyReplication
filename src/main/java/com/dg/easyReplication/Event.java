@@ -5,10 +5,10 @@ import java.util.LinkedList;
 public class Event {
 	
 	private LinkedList<String> changes;
-	private String lastLSN;
+	private Long lastLSN;
 	private boolean isSimpleEvent;
 
-	public Event(LinkedList<String> changes, String lsn, boolean simple) {
+	public Event(LinkedList<String> changes, Long lsn, boolean simple) {
 		this.changes = changes;
 		this.lastLSN = lsn;
 		this.isSimpleEvent = simple;
@@ -18,7 +18,7 @@ public class Event {
 		return changes;
 	}
 
-	public String getLastLSN() {
+	public Long getLastLSN() {
 		return lastLSN;
 	}
 	

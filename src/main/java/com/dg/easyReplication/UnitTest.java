@@ -66,20 +66,22 @@ public class UnitTest {
 			
 			System.out.println("TEST: Changing data ...");
 
-	    	st.execute("INSERT INTO cidade (codigo, data_fund, nome) VALUES (4, '1929-10-19', 'UBERLANDIA');");
-	    	st.execute("UPDATE cidade SET codigo = 20 WHERE codigo = 4;");
-	    	st.execute("UPDATE cidade SET nome = 'TERRA DO PAO DE QUEIJO' WHERE nome = 'UBERLANDIA';");
-	    	st.execute("DELETE FROM cidade WHERE codigo >= 4;");
+//	    	st.execute("INSERT INTO cidade (codigo, data_fund, nome) VALUES (4, '1929-10-19', 'UBERLANDIA');");
+//	    	st.execute("UPDATE cidade SET codigo = 20 WHERE codigo = 4;");
+//	    	st.execute("UPDATE cidade SET nome = 'TERRA DO PAO DE QUEIJO' WHERE nome = 'UBERLANDIA';");
+//	    	st.execute("DELETE FROM cidade WHERE codigo >= 4;");
 	    	
 			st.close();
 			
 			
 			// Capture data changes
 			
-			boolean isSimpleEvent = true;	// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
+			boolean isSimpleEvent = false;	// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
 
 			while (true) {	
-				Event event = pgEasyReplication.readEvent(isSimpleEvent);
+				Long lsn = (long) 11;
+				
+				Event event = pgEasyReplication.readEvent(isSimpleEvent, lsn);
 				LinkedList<String> changes = event.getChanges();
 				
 				System.out.println("TEST: Printing data changes ...");
@@ -88,7 +90,7 @@ public class UnitTest {
 					System.out.println(change);
 				}
 				
-				System.out.println("TEST: Last LSN: " + event.getLastLSN());
+				System.out.println("TEST: Last LSN: " + event.getLastLSN().toString());
 				
 				try {
 					Thread.sleep(3000);	// Sleep 3 seconds

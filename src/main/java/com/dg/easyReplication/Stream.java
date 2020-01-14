@@ -15,14 +15,14 @@ import org.postgresql.replication.PGReplicationStream;
 public class Stream {
 	
 	private PGReplicationStream repStream;
-	private String lastReceiveLSN;
+	private Long lastReceiveLSN;
 	private Decode decode;
 	
 	public Stream(String pub, String slt) throws SQLException {
 		this(pub, slt, null);
 	}
 
-	public Stream(String pub, String slt, String lsn) throws SQLException {
+	public Stream(String pub, String slt, Long lsn) throws SQLException {
 		PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
 		
 		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
@@ -38,6 +38,8 @@ public class Stream {
 					.start();
 			
 		} else {	// Reading from LSN start position
+			LogSequenceNumber startLSN = LogSequenceNumber.valueOf(lsn);
+
 			this.repStream = pgcon.getReplicationAPI()
 					.replicationStream()
 					.logical()
@@ -45,7 +47,7 @@ public class Stream {
 					.withSlotOption("proto_version", "1")
 					.withSlotOption("publication_names", pub)
 					.withStatusInterval(1, TimeUnit.SECONDS)
-					.withStartPosition(LogSequenceNumber.valueOf(lsn))
+					.withStartPosition(startLSN)
 					.start();
 		}
 	}
@@ -84,12 +86,12 @@ public class Stream {
 			this.repStream.setFlushedLSN(this.repStream.getLastReceiveLSN());
 		}
 		
-		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asString();
+		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asLong();
 
 		return new Event(changes, this.lastReceiveLSN, isSimpleEvent);
 	}
 	
-	public String getLastReceiveLSN() {
+	public Long getLastReceiveLSN() {
 		return this.lastReceiveLSN;
 	}
 }

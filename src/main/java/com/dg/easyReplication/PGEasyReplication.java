@@ -107,7 +107,7 @@ public class PGEasyReplication {
 		return this.readEvent(isSimpleEvent, null);
 	}
 	
-	public Event readEvent(boolean isSimpleEvent, String lsn) {
+	public Event readEvent(boolean isSimpleEvent, Long lsn) {
 		Event event = null;
 
 		try {			
