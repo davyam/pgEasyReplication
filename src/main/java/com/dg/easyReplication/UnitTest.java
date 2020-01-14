@@ -16,19 +16,21 @@ public class UnitTest {
 
 			// Parameters (REPLACE VALUES)
 		
-			String pgServer = "192.168.32.51";		// PostgreSQL server (IP or hostname)
-			String pgPort = "5432";					// PostgreSQL port
-			String pgDatabase = "test";				// PostgreSQL database
-			String pgSSL = "false";					// PostgreSQL SSL connection (true or false)
-			String pgUser = "postgres";				// PostgreSQL user
-			String pgPassword = "";					// PostgreSQL user password
-			String pgPublication = "cidade_pub";	// PostgreSQL publication
-			boolean eventSimple = false;			// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
+			String pgHost = "192.168.32.51";			// PostgreSQL host (IP or hostname)
+			String pgPort = "5432";						// PostgreSQL port
+			String pgDatabase = "test";					// PostgreSQL database
+			String pgSSL = "false";						// PostgreSQL SSL connection (true or false)
+			String pgUser = "postgres";					// PostgreSQL user
+			String pgPassword = "";						// PostgreSQL user password
+			String pgPublication = "cidade_pub";		// PostgreSQL publication
+			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
+			boolean slotDropIfExists = true;			// PostgreSQL slot name (OPTIONAL)
+			boolean eventSimple = false;				// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 			
 			
 			// Instantiate pgEasyReplication class		
 			
-			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, eventSimple);
+			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists, eventSimple);
 			
 			// Snapshot
 			
@@ -49,7 +51,7 @@ public class UnitTest {
 			
 			Class.forName("org.postgresql.Driver");
 			
-			String url = "jdbc:postgresql://" + pgServer + ":" + pgPort + "/" + pgDatabase;
+			String url = "jdbc:postgresql://" + pgHost + ":" + pgPort + "/" + pgDatabase;
 			Properties props = new Properties();
 			props.setProperty("user",pgUser);
 			props.setProperty("password",pgPassword);
@@ -76,14 +78,17 @@ public class UnitTest {
 			// Capture data changes
 
 			while (true) {	
-				LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
+				Event event = pgEasyReplication.readEvent();
+				LinkedList<String> changes = event.getChanges();
 				
 				System.out.println("TEST: Printing data changes ...");
 				
 				for (String change : changes) {
 					System.out.println(change);
 				}
-
+				
+				System.out.println("TEST: Last LSN: " + event.getLastLSN());
+				
 				try {
 					Thread.sleep(3000);	// Sleep 3 seconds
 				} catch (InterruptedException ex) {

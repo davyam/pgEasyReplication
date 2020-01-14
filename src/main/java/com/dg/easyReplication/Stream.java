@@ -14,15 +14,22 @@ import org.postgresql.replication.PGReplicationStream;
 
 public class Stream {
 
-	private boolean eventSimple;		
+	private boolean isSimpleEvent;		
 	private PGReplicationStream repStream;
+	private String lastReceiveLSN;
 	private Decode decode;
+	
+	public Stream(String pub, String slt, boolean isSimple) throws SQLException {
+		this(pub, slt, isSimple, null);
+	}
 
-	public Stream(String pub, String slt, boolean simple, String lsn) throws SQLException {
+	public Stream(String pub, String slt, boolean isSimple, String lsn) throws SQLException {
+		
+		this.isSimpleEvent = isSimple;
 
 		PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
 		
-		// More details about pgoutput plugin: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
+		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
 
 		if(lsn == null) {
 			this.repStream = pgcon.getReplicationAPI()
@@ -33,7 +40,8 @@ public class Stream {
 					.withSlotOption("publication_names", pub)
 					.withStatusInterval(1, TimeUnit.SECONDS)
 					.start();
-		} else {			
+			
+		} else {	// Reading from LSN start position
 			this.repStream = pgcon.getReplicationAPI()
 					.replicationStream()
 					.logical()
@@ -44,21 +52,14 @@ public class Stream {
 					.withStartPosition(LogSequenceNumber.valueOf(lsn))
 					.start();
 		}
-			
-		this.eventSimple = simple;
 	}
-	
-	public Stream(String pub, String slt, boolean pretty) throws SQLException {
-		this(pub, slt, pretty, null);
-	}
-	
 
-	public LinkedList<String> readStream()
+	public Event readStream()
 			throws SQLException, InterruptedException, ParseException, UnsupportedEncodingException {
 
-		LinkedList<String> messageQueue = new LinkedList<String>();
+		LinkedList<String> changes = new LinkedList<String>();
 
-		if (this.decode == null) {
+		if (this.decode == null) {	// First read
 			this.decode = new Decode();
 			decode.loadDataTypes();
 		}
@@ -71,27 +72,28 @@ public class Stream {
 			}
 
 			JSONObject json = new JSONObject();
-			
-			String message = "";
+			String change = "";
 
-			if (this.eventSimple) {
-				message = this.decode.decodeLogicalReplicationMessageSimple(buffer, json).toJSONString();
+			if (this.isSimpleEvent) {
+				change = this.decode.decodeLogicalReplicationMessageSimple(buffer, json).toJSONString();
 			} else {
-				message = this.decode.decodeLogicalReplicationMessage(buffer, json).toJSONString().replace("\\\"", "\"");
+				change = this.decode.decodeLogicalReplicationMessage(buffer, json).toJSONString().replace("\\\"", "\"");
 			}
 			
-			if (!message.equals("{}")) // Skip empty transactions
-				messageQueue.addLast(message);
-
+			if (!change.equals("{}")) // Skip empty transactions
+				changes.addLast(change);
+			
 			/* Feedback */
 			this.repStream.setAppliedLSN(this.repStream.getLastReceiveLSN());
 			this.repStream.setFlushedLSN(this.repStream.getLastReceiveLSN());
 		}
+		
+		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asString();
 
-		return messageQueue;
+		return new Event(changes, this.lastReceiveLSN, this.isSimpleEvent);
 	}
 	
-	public LogSequenceNumber getLastReceiveLSN() {
-		return this.repStream.getLastReceiveLSN();
+	public String getLastReceiveLSN() {
+		return this.lastReceiveLSN;
 	}
 }
