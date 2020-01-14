@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
 import org.postgresql.PGProperty;
 
-public class Datasource {
+public class ConnectionManager {
 	
 	private static String server;
-	private static String port;
 	private static String database;
 	private static String ssl;
 	private static String user;
@@ -18,29 +16,26 @@ public class Datasource {
 	private static Connection sqlConnection;
 	private static Connection repConnection;
 	
-	public static void setProperties(String server, String port, String database, String ssl, String user, String password) {
-		
-		Datasource.server = server;
-		Datasource.port = port;
-		Datasource.database = database;
-		Datasource.ssl = ssl;
-		Datasource.user = user;
+	public static void setProperties(String server, String database, String ssl, String user, String password) {	
+		ConnectionManager.server = server;
+		ConnectionManager.database = database;
+		ConnectionManager.ssl = ssl;
+		ConnectionManager.user = user;
 		
 		if(password == null) {
 			password = "";
 		}
-		Datasource.password = password;
+		ConnectionManager.password = password;
 	}
 	
 	public static void createReplicationConnection() {
-
-		String url = "jdbc:postgresql://" + Datasource.server + ":" + Datasource.port + "/" + Datasource.database;
+		String url = "jdbc:postgresql://" + ConnectionManager.server + "/" + ConnectionManager.database;
 		
 		Properties props = new Properties();
 		
-		PGProperty.USER.set(props, Datasource.user);
-		PGProperty.PASSWORD.set(props, Datasource.password);
-		PGProperty.SSL.set(props, Datasource.ssl);
+		PGProperty.USER.set(props, ConnectionManager.user);
+		PGProperty.PASSWORD.set(props, ConnectionManager.password);
+		PGProperty.SSL.set(props, ConnectionManager.ssl);
 		PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "10");
 		PGProperty.REPLICATION.set(props, "database");
 		PGProperty.PREFER_QUERY_MODE.set(props, "simple");
@@ -57,22 +52,25 @@ public class Datasource {
 			e2.printStackTrace();
 		}
 		
-		Datasource.repConnection = conn;
+		ConnectionManager.repConnection = conn;
 	}
 	
 	public static Connection getReplicationConnection() {
-		return Datasource.repConnection;
+		return ConnectionManager.repConnection;
+	}
+	
+	public static void closeReplicationConnection() throws Exception{
+		 ConnectionManager.repConnection.close();
 	}
 	
 	public static void createSQLConnection() {
-
-		String url = "jdbc:postgresql://" + Datasource.server + ":" + Datasource.port + "/" + Datasource.database;
+		String url = "jdbc:postgresql://" + ConnectionManager.server + "/" + ConnectionManager.database;
 		
 		Properties props = new Properties();
 		
-		props.setProperty("user",Datasource.user);
-		props.setProperty("password",Datasource.password);
-		props.setProperty("ssl",Datasource.ssl);
+		props.setProperty("user",ConnectionManager.user);
+		props.setProperty("password",ConnectionManager.password);
+		props.setProperty("ssl",ConnectionManager.ssl);
 		
 		Connection conn = null;
 		
@@ -88,11 +86,14 @@ public class Datasource {
 			e2.printStackTrace();
 		}
 
-		Datasource.sqlConnection = conn;
+		ConnectionManager.sqlConnection = conn;
 	}
 	
 	public static Connection getSQLConnection() {
-		return Datasource.sqlConnection;
+		return ConnectionManager.sqlConnection;
 	}
-
+	
+	public static void closeSQLConnection() throws Exception{
+		ConnectionManager.sqlConnection.close();
+	}
 }

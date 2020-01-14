@@ -449,7 +449,7 @@ public class Decode {
 	
 	public void loadDataTypes() throws SQLException {
 		
-		Statement stmt = Datasource.getSQLConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		Statement stmt = ConnectionManager.getSQLConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
     	ResultSet rs = stmt.executeQuery("SELECT oid, typname FROM pg_catalog.pg_type");
     	

@@ -16,8 +16,7 @@ public class UnitTest {
 
 			// Parameters (REPLACE VALUES)
 		
-			String pgHost = "192.168.32.51";			// PostgreSQL host (IP or hostname)
-			String pgPort = "5432";						// PostgreSQL port
+			String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
 			String pgDatabase = "test";					// PostgreSQL database
 			String pgSSL = "false";						// PostgreSQL SSL connection (true or false)
 			String pgUser = "postgres";					// PostgreSQL user
@@ -29,7 +28,7 @@ public class UnitTest {
 			
 			// Instantiate pgEasyReplication class		
 			
-			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
+			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 			
 			// Snapshot
 			
@@ -50,7 +49,7 @@ public class UnitTest {
 			
 			Class.forName("org.postgresql.Driver");
 			
-			String url = "jdbc:postgresql://" + pgHost + ":" + pgPort + "/" + pgDatabase;
+			String url = "jdbc:postgresql://" + pgServer + "/" + pgDatabase;
 			Properties props = new Properties();
 			props.setProperty("user",pgUser);
 			props.setProperty("password",pgPassword);
@@ -66,21 +65,21 @@ public class UnitTest {
 			
 			System.out.println("TEST: Changing data ...");
 
-//	    	st.execute("INSERT INTO cidade (codigo, data_fund, nome) VALUES (4, '1929-10-19', 'UBERLANDIA');");
-//	    	st.execute("UPDATE cidade SET codigo = 20 WHERE codigo = 4;");
-//	    	st.execute("UPDATE cidade SET nome = 'TERRA DO PAO DE QUEIJO' WHERE nome = 'UBERLANDIA';");
-//	    	st.execute("DELETE FROM cidade WHERE codigo >= 4;");
+	    	st.execute("INSERT INTO cidade (codigo, data_fund, nome) VALUES (4, '1929-10-19', 'UBERLANDIA');");
+	    	st.execute("UPDATE cidade SET codigo = 20 WHERE codigo = 4;");
+	    	st.execute("UPDATE cidade SET nome = 'TERRA DO PAO DE QUEIJO' WHERE nome = 'UBERLANDIA';");
+	    	st.execute("DELETE FROM cidade WHERE codigo >= 4;");
 	    	
 			st.close();
 			
 			// Capture data changes
 			
 			boolean isSimpleEvent = false;	// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
-
-			while (true) {	
-				Long lsn = (long) 24330224;
+			Long startLSN = (long) 24330224;	// Start LSN. If null, get all the changes pending.
+			
+			while (true) {
+				Event event = pgEasyReplication.readEvent(isSimpleEvent, startLSN);	// readEvent(isSimpleEvent, startLSN)
 				
-				Event event = pgEasyReplication.readEvent(isSimpleEvent, lsn);
 				LinkedList<String> changes = event.getChanges();
 				
 				System.out.println("TEST: Printing data changes ...");

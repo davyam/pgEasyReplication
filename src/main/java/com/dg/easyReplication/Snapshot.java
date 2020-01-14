@@ -25,7 +25,7 @@ public class Snapshot {
 
 	public ArrayList<String> getPublicationTables() throws SQLException {
 		
-    	PreparedStatement stmt = Datasource.getSQLConnection()
+    	PreparedStatement stmt = ConnectionManager.getSQLConnection()
     			.prepareStatement("SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = ?");
     	
     	stmt.setString(1, this.publication);
@@ -45,7 +45,7 @@ public class Snapshot {
 	
 	public ArrayList<String> getInitialSnapshotTable(String tableName) throws SQLException, IOException {
 		
-		PGConnection pgcon = Datasource.getSQLConnection().unwrap(PGConnection.class);
+		PGConnection pgcon = ConnectionManager.getSQLConnection().unwrap(PGConnection.class);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		CopyManager manager = pgcon.getCopyAPI();

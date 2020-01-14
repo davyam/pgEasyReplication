@@ -17,27 +17,27 @@ public class PGEasyReplication {
 	private boolean slotDropIfExists;
 	private Stream stream;
 	
-	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub) {
-		this(host, port, database, ssl, user, password, pub, "easy_slot_" + pub, false);
+	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub) {
+		this(server, database, ssl, user, password, pub, "easy_slot_" + pub, false);
 	}
 	
-	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub, String slt) {
-		this(host, port, database, ssl, user, password, pub, slt, false);
+	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub, String slt) {
+		this(server, database, ssl, user, password, pub, slt, false);
 	}
 	
-	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub, String slt, boolean sltDropIfExists) {
+	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub, String slt, boolean sltDropIfExists) {
 		this.publication = pub;
 		this.slot = slt;
 		this.slotDropIfExists = sltDropIfExists;
 		
-		Datasource.setProperties(host, port, database, ssl, user, password);
-		Datasource.createSQLConnection();
-		Datasource.createReplicationConnection();
+		ConnectionManager.setProperties(server, database, ssl, user, password);
+		ConnectionManager.createSQLConnection();
+		ConnectionManager.createReplicationConnection();
 	}
 
 	public void initializeLogicalReplication() {
 		try {
-			PreparedStatement stmt = Datasource.getSQLConnection()
+			PreparedStatement stmt = ConnectionManager.getSQLConnection()
 					.prepareStatement("select 1 from pg_catalog.pg_replication_slots WHERE slot_name = ?");
 			
 	    	stmt.setString(1, this.slot);
@@ -59,7 +59,7 @@ public class PGEasyReplication {
 
 	public void createReplicationSlot() {						
 		try {
-			PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
+			PGConnection pgcon = ConnectionManager.getReplicationConnection().unwrap(PGConnection.class);
 			
 			pgcon.getReplicationAPI()
 				.createReplicationSlot()
@@ -75,7 +75,7 @@ public class PGEasyReplication {
 
 	public void dropReplicationSlot() {	
 		try {
-			PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
+			PGConnection pgcon = ConnectionManager.getReplicationConnection().unwrap(PGConnection.class);
 			pgcon.getReplicationAPI().dropReplicationSlot(this.slot);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -106,12 +106,12 @@ public class PGEasyReplication {
 		return this.readEvent(isSimpleEvent, null);
 	}
 	
-	public Event readEvent(boolean isSimpleEvent, Long lsn) {
+	public Event readEvent(boolean isSimpleEvent, Long startLSN) {
 		Event event = null;
 
 		try {			
 			if(this.stream == null)	{	// First read
-				this.stream = new Stream(this.publication, this.slot, lsn);
+				this.stream = new Stream(this.publication, this.slot, startLSN);
 			}
 				
 			event = this.stream.readStream(isSimpleEvent);

@@ -23,16 +23,14 @@ public class Stream {
 	}
 
 	public Stream(String pub, String slt, Long lsn) throws SQLException {
-		PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
-		
-		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
+		PGConnection pgcon = ConnectionManager.getReplicationConnection().unwrap(PGConnection.class);
 
 		if(lsn == null) {
 			this.repStream = pgcon.getReplicationAPI()
 					.replicationStream()
 					.logical()
 					.withSlotName(slt)
-					.withSlotOption("proto_version", "1")
+					.withSlotOption("proto_version", "1")		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
 					.withSlotOption("publication_names", pub)
 					.withStatusInterval(1, TimeUnit.SECONDS)
 					.start();
