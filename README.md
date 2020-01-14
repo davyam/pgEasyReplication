@@ -85,16 +85,18 @@ In your Java code, **import the pgEasyReplicaton package**.
 
 Then, **instantiate the PGEasyReplication class**:
 ```			
-String pgServer = "192.168.32.51";	// PostgreSQL server (IP or hostname)
-String pgPort = "5432";			// PostgreSQL port
-String pgDatabase = "test";		// PostgreSQL database
-String pgSSL = "false";			// PostgreSQL SSL connection (true or false)
-String pgUser = "postgres";		// PostgreSQL user
-String pgPassword = "123123";		// PostgreSQL user password
-String pgPublication = "cidade_pub";	// PostgreSQL publication
-boolean messagePretty = true;		// JSON data change pretty (default is true). Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc.
+String pgServer = "192.168.32.51";		// PostgreSQL server (IP or hostname)
+String pgPort = "5432";				// PostgreSQL port
+String pgDatabase = "test";			// PostgreSQL database
+String pgSSL = "false";				// PostgreSQL SSL connection (true or false)
+String pgUser = "postgres";			// PostgreSQL user
+String pgPassword = "123123";			// PostgreSQL user password
+String pgPublication = "cidade_pub";		// PostgreSQL publication
+String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
+boolean slotDropIfExists = true;		// PostgreSQL slot name (OPTIONAL)
+boolean eventSimple = false;			// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 
-PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, messagePretty);
+PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists, eventSimple);
 ```
 ----------
 To get a **snapshot** of the published tables:
@@ -118,7 +120,9 @@ To **capture data changes** in published tables:
 ```
 pgEasyReplication.initializeLogicalReplication();
 	
-LinkedList<String> changes = pgEasyReplication.readLogicalReplicationSlot();
+Event event = pgEasyReplication.readEvent();
+
+LinkedList<String> changes = event.getChanges();
 ```
 
 Printing data changes:
