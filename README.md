@@ -85,7 +85,7 @@ In your Java code, **import the pgEasyReplicaton package**.
 
 Then, **instantiate the PGEasyReplication class**:
 ```			
-String pgServer = "192.168.32.51";		// PostgreSQL server (IP or hostname)
+String pgHost = "192.168.32.51";		// PostgreSQL server (IP or hostname)
 String pgPort = "5432";				// PostgreSQL port
 String pgDatabase = "test";			// PostgreSQL database
 String pgSSL = "false";				// PostgreSQL SSL connection (true or false)
