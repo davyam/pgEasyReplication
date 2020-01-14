@@ -71,7 +71,6 @@ public class PGEasyReplication {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void dropReplicationSlot() {	

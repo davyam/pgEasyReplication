@@ -24,7 +24,7 @@ public class UnitTest {
 			String pgPassword = "";						// PostgreSQL user password
 			String pgPublication = "cidade_pub";		// PostgreSQL publication
 			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
-			boolean slotDropIfExists = true;			// PostgreSQL slot name (OPTIONAL)
+			boolean slotDropIfExists = false;			// PostgreSQL slot name (OPTIONAL)
 			
 			
 			// Instantiate pgEasyReplication class		
@@ -73,13 +73,12 @@ public class UnitTest {
 	    	
 			st.close();
 			
-			
 			// Capture data changes
 			
 			boolean isSimpleEvent = false;	// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
 
 			while (true) {	
-				Long lsn = (long) 11;
+				Long lsn = (long) 24330224;
 				
 				Event event = pgEasyReplication.readEvent(isSimpleEvent, lsn);
 				LinkedList<String> changes = event.getChanges();
