@@ -15,26 +15,20 @@ public class PGEasyReplication {
 	private String publication;
 	private String slot;
 	private boolean slotDropIfExists;
-	private boolean isSimpleEvent;
 	private Stream stream;
 	
 	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub) {
-		this(host, port, database, ssl, user, password, pub, "easy_slot_" + pub, false, true);
+		this(host, port, database, ssl, user, password, pub, "easy_slot_" + pub, false);
 	}
 	
 	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub, String slt) {
-		this(host, port, database, ssl, user, password, pub, slt, false, true);
+		this(host, port, database, ssl, user, password, pub, slt, false);
 	}
 	
 	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub, String slt, boolean sltDropIfExists) {
-		this(host, port, database, ssl, user, password, pub, slt, sltDropIfExists, true);
-	}
-	
-	public PGEasyReplication(String host, String port, String database, String ssl, String user, String password, String pub, String slt, boolean sltDropIfExists, boolean isSimple) {
 		this.publication = pub;
 		this.slot = slt;
 		this.slotDropIfExists = sltDropIfExists;
-		this.isSimpleEvent = isSimple;
 		
 		Datasource.setProperties(host, port, database, ssl, user, password);
 		Datasource.createSQLConnection();
@@ -106,18 +100,22 @@ public class PGEasyReplication {
 	}
 
 	public Event readEvent() {
-		return this.readEvent(null);
+		return this.readEvent(true, null);
 	}
 	
-	public Event readEvent(String lsn) {
+	public Event readEvent(boolean isSimpleEvent) {
+		return this.readEvent(isSimpleEvent, null);
+	}
+	
+	public Event readEvent(boolean isSimpleEvent, String lsn) {
 		Event event = null;
 
 		try {			
-			if(this.stream == null)	{	// First read		
-				this.stream = new Stream(this.publication, this.slot, this.isSimpleEvent, lsn);
+			if(this.stream == null)	{	// First read
+				this.stream = new Stream(this.publication, this.slot, lsn);
 			}
 				
-			event = this.stream.readStream();
+			event = this.stream.readStream(isSimpleEvent);
 
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -13,20 +13,16 @@ import org.postgresql.replication.LogSequenceNumber;
 import org.postgresql.replication.PGReplicationStream;
 
 public class Stream {
-
-	private boolean isSimpleEvent;		
+	
 	private PGReplicationStream repStream;
 	private String lastReceiveLSN;
 	private Decode decode;
 	
-	public Stream(String pub, String slt, boolean isSimple) throws SQLException {
-		this(pub, slt, isSimple, null);
+	public Stream(String pub, String slt) throws SQLException {
+		this(pub, slt, null);
 	}
 
-	public Stream(String pub, String slt, boolean isSimple, String lsn) throws SQLException {
-		
-		this.isSimpleEvent = isSimple;
-
+	public Stream(String pub, String slt, String lsn) throws SQLException {
 		PGConnection pgcon = Datasource.getReplicationConnection().unwrap(PGConnection.class);
 		
 		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
@@ -54,7 +50,7 @@ public class Stream {
 		}
 	}
 
-	public Event readStream()
+	public Event readStream(boolean isSimpleEvent)
 			throws SQLException, InterruptedException, ParseException, UnsupportedEncodingException {
 
 		LinkedList<String> changes = new LinkedList<String>();
@@ -74,7 +70,7 @@ public class Stream {
 			JSONObject json = new JSONObject();
 			String change = "";
 
-			if (this.isSimpleEvent) {
+			if (isSimpleEvent) {
 				change = this.decode.decodeLogicalReplicationMessageSimple(buffer, json).toJSONString();
 			} else {
 				change = this.decode.decodeLogicalReplicationMessage(buffer, json).toJSONString().replace("\\\"", "\"");
@@ -90,7 +86,7 @@ public class Stream {
 		
 		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asString();
 
-		return new Event(changes, this.lastReceiveLSN, this.isSimpleEvent);
+		return new Event(changes, this.lastReceiveLSN, isSimpleEvent);
 	}
 	
 	public String getLastReceiveLSN() {

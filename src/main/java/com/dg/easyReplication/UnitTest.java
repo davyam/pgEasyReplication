@@ -25,12 +25,11 @@ public class UnitTest {
 			String pgPublication = "cidade_pub";		// PostgreSQL publication
 			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
 			boolean slotDropIfExists = true;			// PostgreSQL slot name (OPTIONAL)
-			boolean eventSimple = false;				// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, xCommitTime, numColumns, TupleType, etc
 			
 			
 			// Instantiate pgEasyReplication class		
 			
-			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists, eventSimple);
+			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 			
 			// Snapshot
 			
@@ -76,9 +75,11 @@ public class UnitTest {
 			
 			
 			// Capture data changes
+			
+			boolean isSimpleEvent = true;	// Simple JSON data change (default is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
 
 			while (true) {	
-				Event event = pgEasyReplication.readEvent();
+				Event event = pgEasyReplication.readEvent(isSimpleEvent);
 				LinkedList<String> changes = event.getChanges();
 				
 				System.out.println("TEST: Printing data changes ...");
