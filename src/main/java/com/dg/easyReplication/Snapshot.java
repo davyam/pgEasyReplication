@@ -23,8 +23,7 @@ public class Snapshot {
 	}
 
 
-	public ArrayList<String> getPublicationTables() throws SQLException {
-		
+	public ArrayList<String> getPublicationTables() throws SQLException {		
     	PreparedStatement stmt = ConnectionManager.getSQLConnection()
     			.prepareStatement("SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = ?");
     	
@@ -43,8 +42,7 @@ public class Snapshot {
     	return pubTables;
 	}
 	
-	public ArrayList<String> getInitialSnapshotTable(String tableName) throws SQLException, IOException {
-		
+	public ArrayList<String> getInitialSnapshotTable(String tableName) throws SQLException, IOException {	
 		PGConnection pgcon = ConnectionManager.getSQLConnection().unwrap(PGConnection.class);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
@@ -55,26 +53,26 @@ public class Snapshot {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public LinkedList<String> getInitialSnapshot() throws SQLException, IOException {
-		
-		LinkedList<String> messageQueue = new LinkedList<String>();
+	public Event getInitialSnapshot() throws SQLException, IOException {	
+		LinkedList<String> snapshot = new LinkedList<String>();
 		
 		ArrayList<String> pubTables = this.getPublicationTables();		
 		JSONObject jsonSnapshot = new JSONObject();
 				
 		for (String table : pubTables) {			
 			ArrayList<String> lines = this.getInitialSnapshotTable(table);
+			
 			JSONArray tableLines = new JSONArray();
 			
 			for (String line : lines) {
 				tableLines.add(line);				
 			}
-			
+
 			jsonSnapshot.put(table, tableLines);
 		}
 		
-		messageQueue.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"") + "}");
+		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"") + "}");
 		
-		return messageQueue;
+		return new Event(snapshot, null, true, false);
 	}
 }

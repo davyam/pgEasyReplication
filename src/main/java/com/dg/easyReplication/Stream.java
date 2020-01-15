@@ -86,7 +86,7 @@ public class Stream {
 		
 		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asLong();
 
-		return new Event(changes, this.lastReceiveLSN, isSimpleEvent);
+		return new Event(changes, this.lastReceiveLSN, isSimpleEvent, false);
 	}
 	
 	public Long getLastReceiveLSN() {

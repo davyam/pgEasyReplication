@@ -4,18 +4,20 @@ import java.util.LinkedList;
 
 public class Event {
 	
-	private LinkedList<String> changes;
+	private LinkedList<String> data;
 	private Long lastLSN;
 	private boolean isSimpleEvent;
+	private boolean isSnapshot;
 
-	public Event(LinkedList<String> changes, Long lsn, boolean simple) {
-		this.changes = changes;
+	public Event(LinkedList<String> data, Long lsn, boolean isSimple, boolean isSnap) {
+		this.data = data;
 		this.lastLSN = lsn;
-		this.isSimpleEvent = simple;
+		this.isSimpleEvent = isSimple;
+		this.isSimpleEvent = isSnap;
 	}
 	
-	public LinkedList<String> getChanges() {
-		return changes;
+	public LinkedList<String> getData() {
+		return data;
 	}
 
 	public Long getLastLSN() {
@@ -24,5 +26,9 @@ public class Event {
 	
 	public boolean isSimpleEvent() {
 		return isSimpleEvent;
+	}
+	
+	public boolean isSnapshot() {
+		return isSnapshot;
 	}
 }

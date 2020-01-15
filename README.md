@@ -100,7 +100,9 @@ PGEasyReplication pgEasyReplication = new PGEasyReplication(pgHost, pgPort, pgDa
 ----------
 To get a **snapshot** of the published tables:
 ```
-LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+Event eventSnapshots = pgEasyReplication.getSnapshot();
+
+LinkedList<String> snapshots = eventSnapshots.getData();
 ```
 
 Printing snapshot:
@@ -121,9 +123,9 @@ pgEasyReplication.initializeLogicalReplication();
 
 boolean isSimpleEvent = true;	// Simple JSON data change (DEFAULT is true).  Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc
 	
-Event event = pgEasyReplication.readEvent(isSimpleEvent);
+Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent);
 
-LinkedList<String> changes = event.getChanges();
+LinkedList<String> changes = eventChanges.getData();
 ```
 
 Printing data changes:

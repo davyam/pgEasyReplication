@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.LinkedList;
 
 import org.postgresql.PGConnection;
 
@@ -82,12 +81,12 @@ public class PGEasyReplication {
 		}
 	}
 
-	public LinkedList<String> getSnapshot() {
-		LinkedList<String> snapshotMessageQueue = new LinkedList<String>();
+	public Event getSnapshot() {
+		Event event = null;
 
 		try {
 			Snapshot snapshot = new Snapshot(this.publication);
-			snapshotMessageQueue = snapshot.getInitialSnapshot();
+			event = snapshot.getInitialSnapshot();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -95,7 +94,7 @@ public class PGEasyReplication {
 			e.printStackTrace();
 		}
 
-		return snapshotMessageQueue;
+		return event;
 	}
 
 	public Event readEvent() {

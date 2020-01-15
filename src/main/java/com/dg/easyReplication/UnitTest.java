@@ -32,7 +32,8 @@ public class UnitTest {
 			
 			// Snapshot
 			
-			LinkedList<String> snapshots = pgEasyReplication.getSnapshot();
+			Event eventSnapshots = pgEasyReplication.getSnapshot();
+			LinkedList<String> snapshots = eventSnapshots.getData();
 			
 			System.out.println("TEST: Printing snapshot ...");
 			
@@ -78,9 +79,8 @@ public class UnitTest {
 			Long startLSN = (long) 24330224;	// Start LSN. If null, get all the changes pending.
 			
 			while (true) {
-				Event event = pgEasyReplication.readEvent(isSimpleEvent, startLSN);	// readEvent(isSimpleEvent, startLSN)
-				
-				LinkedList<String> changes = event.getChanges();
+				Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, startLSN);	// readEvent(isSimpleEvent, startLSN)		
+				LinkedList<String> changes = eventChanges.getData();
 				
 				System.out.println("TEST: Printing data changes ...");
 				
@@ -88,7 +88,7 @@ public class UnitTest {
 					System.out.println(change);
 				}
 				
-				System.out.println("TEST: Last LSN: " + event.getLastLSN().toString());
+				System.out.println("TEST: Last LSN: " + eventChanges.getLastLSN().toString());
 				
 				try {
 					Thread.sleep(3000);	// Sleep 3 seconds
