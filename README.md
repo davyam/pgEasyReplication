@@ -86,13 +86,13 @@ In your Java code, **import the pgEasyReplicaton package**.
 Then, **instantiate the PGEasyReplication class**:
 ```			
 String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
-String pgDatabase = "test";					// PostgreSQL database
-String pgSSL = "false";						// PostgreSQL SSL connection (true or false)
-String pgUser = "postgres";					// PostgreSQL username
-String pgPassword = "123123";				// PostgreSQL password (123123, realy? kkk)
+String pgDatabase = "test";			// PostgreSQL database
+String pgSSL = "false";				// PostgreSQL SSL connection (true or false)
+String pgUser = "postgres";			// PostgreSQL username
+String pgPassword = "123123";			// PostgreSQL password (123123, realy? kkk)
 String pgPublication = "cidade_pub";		// PostgreSQL publication name
-String pgSlot = "slot_cidade_pub";			// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
-boolean slotDropIfExists = false;			// Drop slot if exists (OPTIONAL, DEFAULT false)
+String pgSlot = "slot_cidade_pub";		// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
+boolean slotDropIfExists = false;		// Drop slot if exists (OPTIONAL, DEFAULT false)
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 ```
@@ -136,7 +136,7 @@ for (String change : changes) {
 }
 ```
 
-Output with isSimpleEvent = true (default):
+Output:
 ```
 {"begin":"begin"}
 {"insert":{"cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
