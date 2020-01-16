@@ -19,11 +19,11 @@ public class UnitTest {
 			String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
 			String pgDatabase = "test";					// PostgreSQL database
 			String pgSSL = "false";						// PostgreSQL SSL connection (true or false)
-			String pgUser = "postgres";					// PostgreSQL user
-			String pgPassword = "";						// PostgreSQL user password
-			String pgPublication = "cidade_pub";		// PostgreSQL publication
-			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL)
-			boolean slotDropIfExists = false;			// PostgreSQL slot name (OPTIONAL)
+			String pgUser = "postgres";					// PostgreSQL username
+			String pgPassword = "";						// PostgreSQL password
+			String pgPublication = "cidade_pub";		// PostgreSQL publication name
+			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
+			boolean slotDropIfExists = false;			// Drop slot if exists (OPTIONAL, DEFAULT false)
 			
 			
 			// Instantiate pgEasyReplication class		
