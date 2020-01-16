@@ -123,9 +123,9 @@ pgEasyReplication.initializeLogicalReplication();
 
 boolean isSimpleEvent = true;		// Simple JSON data change (DEFAULT is true). Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc.
 boolean withBeginCommit = true;		// Include BEGIN and COMMIT events (DEFAULT is true).
-Long startLSN = null;				// Start LSN (DEFAULT is null). If null, get all the changes pending.
+Long startLSN = null;			// Start LSN (DEFAULT is null). If null, get all the changes pending.
 
-Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, withBeginCommit, startLSN);
+Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, withBeginCommit, startLSN);		// Using DEFAULT values: readEvent(), readEvent(isSimpleEvent), readEvent(isSimpleEvent, withBeginCommit)
 
 LinkedList<String> changes = eventChanges.getData();
 ```
