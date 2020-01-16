@@ -116,7 +116,7 @@ Output:
 {"snaphost":{"public.cidade":["{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}","{"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}","{"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}"]}}
 ```
 ----------
-To **capture data changes** in published tables:
+To **capture data changes** of the published tables:
 ```
 pgEasyReplication.initializeLogicalReplication();
 
