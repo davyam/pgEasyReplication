@@ -20,33 +20,39 @@ public class Decode {
 	private HashMap<Integer, Relation> relations = new HashMap<Integer, Relation>();
 	
 	@SuppressWarnings("unchecked")
-	public JSONObject decodeLogicalReplicationMessage(ByteBuffer buffer, JSONObject json) throws ParseException, SQLException, UnsupportedEncodingException {
+	public JSONObject decodeLogicalReplicationMessage(ByteBuffer buffer, JSONObject json, boolean withBeginCommit) throws ParseException, SQLException, UnsupportedEncodingException {
         
         char msgType = (char) buffer.get(0); 															/* (Byte1) Identifies the message as a begin message. */
         int position = 1;
         
 		switch (msgType) {
-		case 'B': /* Identifies the message as a begin message.*/
+		case 'B': /* Identifies the message as a begin message.*/	
+			if(withBeginCommit) {
+				
+		        JSONObject jsonMessage_B = new JSONObject();
+		        
+		        jsonMessage_B.put("xLSNFinal", buffer.getLong(1));											/* (Int64) The final LSN of the transaction. */
+		        jsonMessage_B.put("xCommitTime", getFormattedPostgreSQLEpochDate(buffer.getLong(9)));		/* (Int64) Commit timestamp of the transaction. The value is in number of microseconds since PostgreSQL epoch (2000-01-01). */
+		        jsonMessage_B.put("xid", buffer.getInt(17));												/* (Int32) Xid of the transaction. */
+				
+				json.put("begin", jsonMessage_B);
+			}
 			
-	        JSONObject jsonMessage_B = new JSONObject();
-	        
-	        jsonMessage_B.put("xLSNFinal", buffer.getLong(1));											/* (Int64) The final LSN of the transaction. */
-	        jsonMessage_B.put("xCommitTime", getFormattedPostgreSQLEpochDate(buffer.getLong(9)));		/* (Int64) Commit timestamp of the transaction. The value is in number of microseconds since PostgreSQL epoch (2000-01-01). */
-	        jsonMessage_B.put("xid", buffer.getInt(17));												/* (Int32) Xid of the transaction. */
-			
-			json.put("begin", jsonMessage_B);
 			return json;
 			
 		case 'C': /* Identifies the message as a commit message. */
+			if(withBeginCommit) {
 			
-	        JSONObject jsonMessage_C = new JSONObject();
-
-	        jsonMessage_C.put("flags", buffer.get(1)); 													/* (Int8) Flags; currently unused (must be 0). */
-	        jsonMessage_C.put("commitLSN", buffer.getLong(2)); 											/* (Int64) The LSN of the commit. */
-	        jsonMessage_C.put("xLSNEnd", buffer.getLong(10)); 											/* (Int64) The end LSN of the transaction. */
-	        jsonMessage_C.put("xCommitTime", getFormattedPostgreSQLEpochDate(buffer.getLong(18))); 		/* (Int64) Commit timestamp of the transaction. The value is in number of microseconds since PostgreSQL epoch (2000-01-01). */
-
-			json.put("commit", jsonMessage_C);
+		        JSONObject jsonMessage_C = new JSONObject();
+	
+		        jsonMessage_C.put("flags", buffer.get(1)); 													/* (Int8) Flags; currently unused (must be 0). */
+		        jsonMessage_C.put("commitLSN", buffer.getLong(2)); 											/* (Int64) The LSN of the commit. */
+		        jsonMessage_C.put("xLSNEnd", buffer.getLong(10)); 											/* (Int64) The end LSN of the transaction. */
+		        jsonMessage_C.put("xCommitTime", getFormattedPostgreSQLEpochDate(buffer.getLong(18))); 		/* (Int64) Commit timestamp of the transaction. The value is in number of microseconds since PostgreSQL epoch (2000-01-01). */
+	
+				json.put("commit", jsonMessage_C);
+			}
+			
 			return json;
 	        			
 		case 'O': /* Identifies the message as an origin message. */
@@ -247,7 +253,7 @@ public class Decode {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public JSONObject decodeLogicalReplicationMessageSimple(ByteBuffer buffer, JSONObject json) throws ParseException, SQLException, UnsupportedEncodingException {
+	public JSONObject decodeLogicalReplicationMessageSimple(ByteBuffer buffer, JSONObject json, boolean withBeginCommit) throws ParseException, SQLException, UnsupportedEncodingException {
 		
         char msgType = (char) buffer.get(0); 													/* (Byte1) Identifies the message as a begin message. */
         int position = 1;
@@ -255,12 +261,16 @@ public class Decode {
 		switch (msgType) {
 		case 'B': /* Identifies the message as a begin message.*/
 			
-			json.put("begin", "begin");
+			if (withBeginCommit)
+				json.put("begin", "begin");
+			
 			return json;
 			
 		case 'C': /* Identifies the message as a commit message. */
 
-			json.put("commit", "commit");
+			if (withBeginCommit)
+				json.put("commit", "commit");
+			
 			return json;
 	        			
 		case 'O': /* Identifies the message as an origin message. */

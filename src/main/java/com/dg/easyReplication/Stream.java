@@ -50,7 +50,7 @@ public class Stream {
 		}
 	}
 
-	public Event readStream(boolean isSimpleEvent)
+	public Event readStream(boolean isSimpleEvent, boolean withBeginCommit)
 			throws SQLException, InterruptedException, ParseException, UnsupportedEncodingException {
 
 		LinkedList<String> changes = new LinkedList<String>();
@@ -71,9 +71,9 @@ public class Stream {
 			String change = "";
 
 			if (isSimpleEvent) {
-				change = this.decode.decodeLogicalReplicationMessageSimple(buffer, json).toJSONString();
+				change = this.decode.decodeLogicalReplicationMessageSimple(buffer, json, withBeginCommit).toJSONString();
 			} else {
-				change = this.decode.decodeLogicalReplicationMessage(buffer, json).toJSONString().replace("\\\"", "\"");
+				change = this.decode.decodeLogicalReplicationMessage(buffer, json, withBeginCommit).toJSONString().replace("\\\"", "\"");
 			}
 			
 			if (!change.equals("{}")) // Skip empty transactions
@@ -86,7 +86,7 @@ public class Stream {
 		
 		this.lastReceiveLSN = this.repStream.getLastReceiveLSN().asLong();
 
-		return new Event(changes, this.lastReceiveLSN, isSimpleEvent, false);
+		return new Event(changes, this.lastReceiveLSN, isSimpleEvent, withBeginCommit, false);
 	}
 	
 	public Long getLastReceiveLSN() {

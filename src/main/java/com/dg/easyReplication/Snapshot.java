@@ -73,6 +73,6 @@ public class Snapshot {
 		
 		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"") + "}");
 		
-		return new Event(snapshot, null, true, false);
+		return new Event(snapshot, null, true, false, false);
 	}
 }

@@ -98,14 +98,18 @@ public class PGEasyReplication {
 	}
 
 	public Event readEvent() {
-		return this.readEvent(true, null);
+		return this.readEvent(true, true, null);
 	}
 	
 	public Event readEvent(boolean isSimpleEvent) {
-		return this.readEvent(isSimpleEvent, null);
+		return this.readEvent(isSimpleEvent, true, null);
 	}
 	
-	public Event readEvent(boolean isSimpleEvent, Long startLSN) {
+	public Event readEvent(boolean isSimpleEvent, boolean withBeginCommit) {
+		return this.readEvent(isSimpleEvent, withBeginCommit, null);
+	}
+	
+	public Event readEvent(boolean isSimpleEvent, boolean withBeginCommit, Long startLSN) {
 		Event event = null;
 
 		try {			
@@ -113,7 +117,7 @@ public class PGEasyReplication {
 				this.stream = new Stream(this.publication, this.slot, startLSN);
 			}
 				
-			event = this.stream.readStream(isSimpleEvent);
+			event = this.stream.readStream(isSimpleEvent, withBeginCommit);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
