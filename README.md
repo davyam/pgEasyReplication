@@ -137,7 +137,7 @@ for (String change : changes) {
 }
 ```
 
-Output with messagePretty = true (default):
+Output with isSimpleEvent = true (default):
 ```
 {"begin":"begin"}
 {"insert":{"cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
