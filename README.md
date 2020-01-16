@@ -147,7 +147,7 @@ Output with messagePretty = true (default):
 {"commit":"commit"}
 ```
 
-Output with messagePretty = false:
+Output with isSimpleEvent = false:
 ```
 {"begin":{"xid":859,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","xLSNFinal":24202080}}
 {"relation":{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"namespaceName":"public","numColumns":3}}
