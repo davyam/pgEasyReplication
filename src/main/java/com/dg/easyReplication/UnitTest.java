@@ -16,18 +16,18 @@ public class UnitTest {
 
 			// Parameters (REPLACE VALUES)
 		
-			String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
-			String pgDatabase = "test";					// PostgreSQL database
-			String pgUser = "postgres";					// PostgreSQL username
-			String pgPassword = "";						// PostgreSQL password
-			String pgPublication = "cidade_pub";		// PostgreSQL publication name
-			String pgSlot = "slot_teste_cidade_pub";	// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
+			String server = "192.168.32.51:5432";		// PostgreSQL server (host:port)
+			String database = "test";					// PostgreSQL database
+			String user = "postgres";					// PostgreSQL username
+			String password = "";						// PostgreSQL password
+			String publication = "cidade_pub";			// PostgreSQL publication name
+			String slot = "slot_teste_cidade_pub";		// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
 			boolean slotDropIfExists = false;			// Drop slot if exists (OPTIONAL, DEFAULT false)
 			
 			
 			// Instantiate pgEasyReplication class		
 			
-			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
+			PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot, slotDropIfExists);
 			
 			// Snapshot
 			
@@ -49,10 +49,10 @@ public class UnitTest {
 			
 			Class.forName("org.postgresql.Driver");
 			
-			String url = "jdbc:postgresql://" + pgServer + "/" + pgDatabase;
+			String url = "jdbc:postgresql://" + server + "/" + database;
 			Properties props = new Properties();
-			props.setProperty("user",pgUser);
-			props.setProperty("password",pgPassword);
+			props.setProperty("user",user);
+			props.setProperty("password",password);
 			
 			Connection conn = DriverManager.getConnection(url, props);
 
