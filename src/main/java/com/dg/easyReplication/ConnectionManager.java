@@ -10,16 +10,14 @@ public class ConnectionManager {
 	
 	private static String server;
 	private static String database;
-	private static String ssl;
 	private static String user;
 	private static String password;
 	private static Connection sqlConnection;
 	private static Connection repConnection;
 	
-	public static void setProperties(String server, String database, String ssl, String user, String password) {	
+	public static void setProperties(String server, String database, String user, String password) {	
 		ConnectionManager.server = server;
 		ConnectionManager.database = database;
-		ConnectionManager.ssl = ssl;
 		ConnectionManager.user = user;
 		
 		if(password == null) {
@@ -35,7 +33,6 @@ public class ConnectionManager {
 		
 		PGProperty.USER.set(props, ConnectionManager.user);
 		PGProperty.PASSWORD.set(props, ConnectionManager.password);
-		PGProperty.SSL.set(props, ConnectionManager.ssl);
 		PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "10");
 		PGProperty.REPLICATION.set(props, "database");
 		PGProperty.PREFER_QUERY_MODE.set(props, "simple");
@@ -70,7 +67,6 @@ public class ConnectionManager {
 		
 		props.setProperty("user",ConnectionManager.user);
 		props.setProperty("password",ConnectionManager.password);
-		props.setProperty("ssl",ConnectionManager.ssl);
 		
 		Connection conn = null;
 		

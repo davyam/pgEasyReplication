@@ -18,7 +18,6 @@ public class UnitTest {
 		
 			String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
 			String pgDatabase = "test";					// PostgreSQL database
-			String pgSSL = "false";						// PostgreSQL SSL connection (true or false)
 			String pgUser = "postgres";					// PostgreSQL username
 			String pgPassword = "";						// PostgreSQL password
 			String pgPublication = "cidade_pub";		// PostgreSQL publication name
@@ -28,7 +27,7 @@ public class UnitTest {
 			
 			// Instantiate pgEasyReplication class		
 			
-			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
+			PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 			
 			// Snapshot
 			
@@ -54,7 +53,6 @@ public class UnitTest {
 			Properties props = new Properties();
 			props.setProperty("user",pgUser);
 			props.setProperty("password",pgPassword);
-			props.setProperty("ssl",pgSSL);
 			
 			Connection conn = DriverManager.getConnection(url, props);
 

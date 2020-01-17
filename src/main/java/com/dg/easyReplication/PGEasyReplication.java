@@ -16,20 +16,20 @@ public class PGEasyReplication {
 	private boolean slotDropIfExists;
 	private Stream stream;
 	
-	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub) {
-		this(server, database, ssl, user, password, pub, "easy_slot_" + pub, false);
+	public PGEasyReplication(String server, String database, String user, String password, String pub) {
+		this(server, database, user, password, pub, "easy_slot_" + pub, false);
 	}
 	
-	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub, String slt) {
-		this(server, database, ssl, user, password, pub, slt, false);
+	public PGEasyReplication(String server, String database, String user, String password, String pub, String slt) {
+		this(server, database, user, password, pub, slt, false);
 	}
 	
-	public PGEasyReplication(String server, String database, String ssl, String user, String password, String pub, String slt, boolean sltDropIfExists) {
+	public PGEasyReplication(String server, String database, String user, String password, String pub, String slt, boolean sltDropIfExists) {
 		this.publication = pub;
 		this.slot = slt;
 		this.slotDropIfExists = sltDropIfExists;
 		
-		ConnectionManager.setProperties(server, database, ssl, user, password);
+		ConnectionManager.setProperties(server, database, user, password);
 		ConnectionManager.createSQLConnection();
 		ConnectionManager.createReplicationConnection();
 	}

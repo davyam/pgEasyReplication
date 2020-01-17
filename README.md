@@ -87,14 +87,13 @@ Then, **instantiate the PGEasyReplication class**:
 ```			
 String pgServer = "192.168.32.51:5432";		// PostgreSQL server (host:port)
 String pgDatabase = "test";			// PostgreSQL database
-String pgSSL = "false";				// PostgreSQL SSL connection (true or false)
 String pgUser = "postgres";			// PostgreSQL username
 String pgPassword = "123123";			// PostgreSQL password (123123, really? kkk)
 String pgPublication = "cidade_pub";		// PostgreSQL publication name
 String pgSlot = "slot_cidade_pub";		// PostgreSQL slot name (OPTIONAL, DEFAULT "easy_slot_" + publication name)
 boolean slotDropIfExists = false;		// Drop slot if exists (OPTIONAL, DEFAULT false)
 
-PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgSSL, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
+PGEasyReplication pgEasyReplication = new PGEasyReplication(pgServer, pgDatabase, pgUser, pgPassword, pgPublication, pgSlot, slotDropIfExists);
 ```
 ----------
 To get a **snapshot** of the published tables:
