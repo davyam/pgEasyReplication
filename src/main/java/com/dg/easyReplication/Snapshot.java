@@ -71,7 +71,7 @@ public class Snapshot {
 			jsonSnapshot.put(table, tableLines);
 		}
 		
-		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"") + "}");
+		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"").replace("\"{", "{").replace("}\"", "}") + "}");
 		
 		return new Event(snapshot, null, true, false, false);
 	}
