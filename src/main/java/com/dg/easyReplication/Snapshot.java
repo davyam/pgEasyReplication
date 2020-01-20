@@ -9,12 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
-
-import org.apache.commons.text.StringEscapeUtils;
 
 public class Snapshot {
 
@@ -49,32 +45,22 @@ public class Snapshot {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		CopyManager manager = pgcon.getCopyAPI();
-		manager.copyOut("COPY (SELECT ROW_TO_JSON(t)::TEXT FROM (SELECT * FROM " + tableName + ") t) TO STDOUT", out);
+		manager.copyOut("COPY (SELECT REGEXP_REPLACE(ROW_TO_JSON(t)::TEXT, '\\\\\\\\', '\\\\', 'g') FROM (SELECT * FROM " + tableName + ") t) TO STDOUT ", out);
 		
 		return new ArrayList<String>(Arrays.asList(out.toString("UTF-8").split("\n")));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Event getInitialSnapshot() throws SQLException, IOException {	
 		LinkedList<String> snapshot = new LinkedList<String>();
 		
 		ArrayList<String> pubTables = this.getPublicationTables();		
-		JSONObject jsonSnapshot = new JSONObject();
 				
 		for (String table : pubTables) {			
 			ArrayList<String> lines = this.getInitialSnapshotTable(table);
 			
-			JSONArray tableLines = new JSONArray();
-			
-			for (String line : lines) {
-				tableLines.add(StringEscapeUtils.unescapeJson(line));				
-			}
-
-			jsonSnapshot.put(table, tableLines);
+			snapshot.addFirst("{\"snaphost\":{\"" + table + "\":" + lines.toString().replace("\\\\\"", "\\\"") + "}}");
 		}
-		
-		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString() + "}");
-		
+
 		return new Event(snapshot, null, true, false, false);
 	}
 }
