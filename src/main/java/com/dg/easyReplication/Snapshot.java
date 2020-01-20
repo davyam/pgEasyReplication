@@ -14,6 +14,8 @@ import org.json.simple.JSONObject;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 public class Snapshot {
 
 	private String publication;
@@ -47,7 +49,7 @@ public class Snapshot {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		CopyManager manager = pgcon.getCopyAPI();
-		manager.copyOut("COPY (SELECT REGEXP_REPLACE(ROW_TO_JSON(t)::TEXT, '\\\\', '\\', 'g') FROM (SELECT * FROM " + tableName + ") t) TO STDOUT", out);
+		manager.copyOut("COPY (SELECT ROW_TO_JSON(t)::TEXT FROM (SELECT * FROM " + tableName + ") t) TO STDOUT", out);
 		
 		return new ArrayList<String>(Arrays.asList(out.toString("UTF-8").split("\n")));
 	}
@@ -65,13 +67,13 @@ public class Snapshot {
 			JSONArray tableLines = new JSONArray();
 			
 			for (String line : lines) {
-				tableLines.add(line);				
+				tableLines.add(StringEscapeUtils.unescapeJson(line));				
 			}
 
 			jsonSnapshot.put(table, tableLines);
 		}
 		
-		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString().replace("\\\"", "\"").replace("\"{", "{").replace("}\"", "}") + "}");
+		snapshot.addFirst("{\"snaphost\":" + jsonSnapshot.toJSONString() + "}");
 		
 		return new Event(snapshot, null, true, false, false);
 	}
