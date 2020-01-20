@@ -58,7 +58,7 @@ public class Snapshot {
 		for (String table : pubTables) {			
 			ArrayList<String> lines = this.getInitialSnapshotTable(table);
 			
-			snapshot.addFirst("{\"snaphost\":{\"" + table + "\":" + lines.toString().replace("\\\\\"", "\\\"") + "}}");
+			snapshot.add("{\"snaphost\":{\"" + table + "\":" + lines.toString().replace("\\\\\"", "\\\"") + "}}");
 		}
 
 		return new Event(snapshot, null, true, false, false);
