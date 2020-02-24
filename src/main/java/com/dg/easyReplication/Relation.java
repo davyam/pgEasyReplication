@@ -42,6 +42,10 @@ public class Relation {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getFullName() {
+		return (namespace != null) ? namespace + "." + name : "pg_catalog." + name;
+	}
 
 	public char getReplicaIdentity() {
 		return replicaIdentity;

@@ -138,10 +138,10 @@ for (String change : changes) {
 Output:
 ```
 {"begin":"begin"}
-{"insert":{"cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
+{"insert":{"public.cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
 {"commit":"commit"}
 {"begin":"begin"}
-{"update":{"cidade":{"codigo":20,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
+{"update":{"public.cidade":{"codigo":20,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
 {"commit":"commit"}
 ```
 

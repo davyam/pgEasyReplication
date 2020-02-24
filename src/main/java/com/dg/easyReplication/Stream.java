@@ -30,12 +30,13 @@ public class Stream {
 					.replicationStream()
 					.logical()
 					.withSlotName(slt)
-					.withSlotOption("proto_version", "1")		// More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
+					.withSlotOption("proto_version", "1") // More details about pgoutput options: https://github.com/postgres/postgres/blob/master/src/backend/replication/pgoutput/pgoutput.c
 					.withSlotOption("publication_names", pub)
 					.withStatusInterval(1, TimeUnit.SECONDS)
 					.start();
 			
-		} else {	// Reading from LSN start position
+		} else {	
+			// Reading from LSN start position
 			LogSequenceNumber startLSN = LogSequenceNumber.valueOf(lsn);
 
 			this.repStream = pgcon.getReplicationAPI()
@@ -55,7 +56,8 @@ public class Stream {
 
 		LinkedList<String> changes = new LinkedList<String>();
 
-		if (this.decode == null) {	// First read
+		if (this.decode == null) {	
+			// First read
 			this.decode = new Decode();
 			decode.loadDataTypes();
 		}

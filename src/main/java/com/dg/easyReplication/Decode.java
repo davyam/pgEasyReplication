@@ -344,7 +344,7 @@ public class Decode {
 	        
 	        position += 1;																		/* (Byte1) Identifies the following TupleData message as a new tuple ('N'). */
 	        
-	        jsonMessage_I.put(this.relations.get(relationId_I).getName(), 
+	        jsonMessage_I.put(this.relations.get(relationId_I).getFullName(), 
 	        		parseTupleDataSimple(relationId_I, buffer, position)[0]);				
 	        	        
 			json.put("insert", jsonMessage_I);
@@ -363,7 +363,7 @@ public class Decode {
 			Object[] tupleData1 = parseTupleDataSimple(relationId_U, buffer, position);			/* TupleData N, K or O */
 			
 			if (tupleType1 == 'N') {
-				jsonMessage_U.put(this.relations.get(relationId_U).getName(), tupleData1[0]);
+				jsonMessage_U.put(this.relations.get(relationId_U).getFullName(), tupleData1[0]);
 				json.put("update", jsonMessage_U);
 				return json;			
 			}
@@ -372,7 +372,7 @@ public class Decode {
 
 			position += 1;																		/* (Byte1) Either identifies the following TupleData submessage as a key ('K') or as an old tuple ('O') or as a new tuple ('N'). */
 			
-			jsonMessage_U.put(this.relations.get(relationId_U).getName(), 
+			jsonMessage_U.put(this.relations.get(relationId_U).getFullName(), 
 					parseTupleDataSimple(relationId_U, buffer, position)[0]);					/* TupleData N */
 			
 			json.put("update", jsonMessage_U);
@@ -387,7 +387,7 @@ public class Decode {
 			
 			position += 1;																		/* (Byte1) Either identifies the following TupleData submessage as a key ('K') or as an old tuple ('O'). */
 			
-			jsonMessage_D.put(this.relations.get(relationId_D).getName(), 
+			jsonMessage_D.put(this.relations.get(relationId_D).getFullName(), 
 					parseTupleDataSimple(relationId_D, buffer, position)[0]);					/* TupleData */
 			
 			json.put("delete", jsonMessage_D);

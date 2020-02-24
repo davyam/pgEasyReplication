@@ -16,3 +16,6 @@ nb-configuration.xml
 
 #Visual Studio
 .vscode/
+
+#Test files
+UnitTest_DEV.java
