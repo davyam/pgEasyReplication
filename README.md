@@ -85,15 +85,14 @@ In your Java code, **import the pgEasyReplicaton package**.
 
 Then, **instantiate the PGEasyReplication class**:
 ```			
-String server = "192.168.32.51:5432";		// PostgreSQL server (host:port)
-String database = "test";			// PostgreSQL database
-String user = "postgres";			// PostgreSQL username
-String password = "123123";			// PostgreSQL password (123123, really? kkk)
-String publication = "cidade_pub";		// PostgreSQL publication name
-String slot = "slot_cidade_pub";		// PostgreSQL slot name (OPTIONAL, DEFAULT "easy_slot_" + publication name)
-boolean slotDropIfExists = false;		// Drop slot if exists (OPTIONAL, DEFAULT false)
+String server = "192.168.32.51:5432";	// PostgreSQL server (host:port)
+String database = "test"; 				// PostgreSQL database
+String user = "postgres"; 				// PostgreSQL username
+String password = ""; 					// PostgreSQL password
+String publication = "cidade_pub"; 		// PostgreSQL publication name
+String slot = "slot_teste_cidade_pub"; 	// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
 
-PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot, slotDropIfExists);
+PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot);
 ```
 ----------
 To get a **snapshot** of the published tables:
@@ -112,18 +111,23 @@ for (String snapshot : snapshots) {
 
 Output:
 ```
-{"snaphost":{"public.cidade":[{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}, {"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}, {"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}]}}
+{"snapshot":{"relationName":"public.cidade","tupleData":[{"codigo":1,"data_fund":"1554-01-25","nome":"SAO PAULO"}, {"codigo":2,"data_fund":"1960-04-21","nome":"BRASILIA"}, {"codigo":3,"data_fund":"1565-03-01","nome":"RIO DE JANEIRO"}]}}
 ```
 ----------
 To **capture data changes** of the published tables:
 ```
-pgEasyReplication.initializeLogicalReplication();
+boolean slotDropIfExists = false;			// Drop slot if exists (OPTIONAL, DEFAULT false)
 
-boolean isSimpleEvent = true;		// Simple JSON data change (DEFAULT is true). Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc.
-boolean withBeginCommit = true;		// Include BEGIN and COMMIT events (DEFAULT is true).
-Long startLSN = null;			// Start LSN (DEFAULT is null). If null, get all the changes pending.
+pgEasyReplication.initializeLogicalReplication(slotDropIfExists);
 
-Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, withBeginCommit, startLSN);	// Using DEFAULT values: readEvent(), readEvent(isSimpleEvent), readEvent(isSimpleEvent, withBeginCommit)
+boolean isSimpleEvent = true;				// Simple JSON data change (DEFAULT is true). Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc.
+boolean withBeginCommit = false; 			// Include BEGIN and COMMIT events (DEFAULT is false).
+String outputFormat = "application/json"; 	// Mime type output format (DEFAULT is "application/json"). Until now, JSON is the only available option.
+Long startLSN = null; 						// Start LSN (DEFAULT is null). If null, get all the changes pending.
+
+Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, withBeginCommit, outputFormat, startLSN); 
+
+// Using DEFAULT values: readEvent(), readEvent(isSimpleEvent), readEvent(isSimpleEvent, withBeginCommit), ...
 
 LinkedList<String> changes = eventChanges.getData();
 ```
@@ -137,23 +141,28 @@ for (String change : changes) {
 
 Output:
 ```
-{"begin":"begin"}
-{"insert":{"public.cidade":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
-{"commit":"commit"}
-{"begin":"begin"}
-{"update":{"public.cidade":{"codigo":20,"nome":"UBERLANDIA","data_fund":"1929-10-19"}}}
-{"commit":"commit"}
+{"tupleData":{"codigo":4,"nome":"UBERLANDIA","data_fund":"1929-10-19"},"relationName":"public.cidade","type":"insert"}
+
+{"tupleData":{"codigo":20,"nome":"UBERLANDIA","data_fund":"1929-10-19"},"relationName":"public.cidade","type":"update"}
+
+{"tupleData":{"codigo":20,"nome":"TERRA DO PAO DE QUEIJO","data_fund":"1929-10-19"},"relationName":"public.cidade","type":"update"}
+
+{"tupleData":{"codigo":20,"nome":"TERRA DO PAO DE QUEIJO","data_fund":"1929-10-19"},"relationName":"public.cidade","type":"delete"}
 ```
 
 Output with isSimpleEvent = false:
 ```
-{"begin":{"xid":859,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","xLSNFinal":24202080}}
-{"relation":{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"namespaceName":"public","numColumns":3}}
-{"insert":{"tupleData":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType":"N"}}
-{"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202080,"xLSNEnd":24202128}}
-{"begin":{"xid":860,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","xLSNFinal":24202240}}
-{"update":{"tupleType2":"N","tupleData1":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"tupleData2":{"values":"(20,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType1":"O"}}
-{"commit":{"flags":0,"xCommitTime":"2020-01-06 20:32:57 BRST -0200","commitLSN":24202240,"xLSNEnd":24202288}}
+{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},
+
+{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"type":"relation","namespaceName":"public","numColumns":3}
+
+{"tupleData":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType":"N","type":"insert"}
+
+{"tupleType2":"N","tupleData1":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"tupleData2":{"values":"(20,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType1":"O","type":"update"}
+
+{"tupleType2":"N","tupleData1":{"values":"(20,1929-10-19,UBERLANDIA)","numColumns":3},"tupleData2":{"values":"(20,1929-10-19,TERRA DO PAO DE QUEIJO)","numColumns":3},"relationId":16385,"tupleType1":"O","type":"update"}
+
+{"tupleData":{"values":"(20,1929-10-19,TERRA DO PAO DE QUEIJO)","numColumns":3},"relationId":16385,"tupleType":"O","type":"delete"}
 ```
 ----------
 In our environment, if you wish, you can adjust UnitTest.java file to run a simple unit dev test.
