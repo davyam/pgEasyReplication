@@ -85,12 +85,12 @@ In your Java code, **import the pgEasyReplicaton package**.
 
 Then, **instantiate the PGEasyReplication class**:
 ```			
-String server = "192.168.32.51:5432";	// PostgreSQL server (host:port)
-String database = "test"; 				// PostgreSQL database
-String user = "postgres"; 				// PostgreSQL username
-String password = ""; 					// PostgreSQL password
+String server = "192.168.32.51:5432";		// PostgreSQL server (host:port)
+String database = "test"; 			// PostgreSQL database
+String user = "postgres"; 			// PostgreSQL username
+String password = ""; 				// PostgreSQL password
 String publication = "cidade_pub"; 		// PostgreSQL publication name
-String slot = "slot_teste_cidade_pub"; 	// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
+String slot = "slot_teste_cidade_pub"; 		// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot);
 ```
@@ -116,24 +116,24 @@ Output:
 ----------
 To **capture data changes** of the published tables:
 ```
-boolean slotDropIfExists = false;			// Drop slot if exists (OPTIONAL, DEFAULT false)
+boolean slotDropIfExists = false;		// Drop slot if exists (OPTIONAL, DEFAULT false)
 
 pgEasyReplication.initializeLogicalReplication(slotDropIfExists);
 
-boolean isSimpleEvent = true;				// Simple JSON data change (DEFAULT is true). Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc.
-boolean withBeginCommit = false; 			// Include BEGIN and COMMIT events (DEFAULT is false).
+boolean isSimpleEvent = true;			// Simple JSON data change (DEFAULT is true). Set false to return details like xid, xCommitTime, numColumns, TupleType, LSN, etc.
+boolean withBeginCommit = false; 		// Include BEGIN and COMMIT events (DEFAULT is false).
 String outputFormat = "application/json"; 	// Mime type output format (DEFAULT is "application/json"). Until now, JSON is the only available option.
-Long startLSN = null; 						// Start LSN (DEFAULT is null). If null, get all the changes pending.
+Long startLSN = null; 				// Start LSN (DEFAULT is null). If null, get all the changes pending.
 
 Event eventChanges = pgEasyReplication.readEvent(isSimpleEvent, withBeginCommit, outputFormat, startLSN); 
 
 // Using DEFAULT values: readEvent(), readEvent(isSimpleEvent), readEvent(isSimpleEvent, withBeginCommit), ...
-
-LinkedList<String> changes = eventChanges.getData();
 ```
 
 Printing data changes:
 ```
+LinkedList<String> changes = eventChanges.getData();
+
 for (String change : changes) {
 	System.out.println(change);
 }
@@ -152,9 +152,7 @@ Output:
 
 Output with isSimpleEvent = false:
 ```
-{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},
-
-{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"type":"relation","namespaceName":"public","numColumns":3}
+{"relationName":"cidade","relReplIdent":"f","columns":[{"typeSpecificData":-1,"isKey":1,"dataTypeColId":23,"columnName":"codigo"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":1082,"columnName":"data_fund"},{"typeSpecificData":-1,"isKey":1,"dataTypeColId":25,"columnName":"nome"}],"relationId":16385,"type":"relation","namespaceName":"public","numColumns":3}
 
 {"tupleData":{"values":"(4,1929-10-19,UBERLANDIA)","numColumns":3},"relationId":16385,"tupleType":"N","type":"insert"}
 
