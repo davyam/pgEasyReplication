@@ -90,7 +90,7 @@ String database = "test"; 			// PostgreSQL database
 String user = "postgres"; 			// PostgreSQL username
 String password = ""; 				// PostgreSQL password
 String publication = "cidade_pub"; 		// PostgreSQL publication name
-String slot = "slot_teste_cidade_pub"; 		// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
+String slot = "slot_teste_cidade_pub"; 		// PostgreSQL slot name (OPTIONAL, DEFAULT "easy_slot_" + publication name)
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot);
 ```
