@@ -1,6 +1,6 @@
 # pgEasyReplication
 
-pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) in PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
+pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) from PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
 
 All the data is returned in JSON format.
 
