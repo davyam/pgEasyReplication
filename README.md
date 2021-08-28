@@ -1,6 +1,6 @@
 # pgEasyReplication
 
-pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) from PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
+pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) in PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
 
 All the data is returned in JSON format.
 
@@ -23,15 +23,17 @@ postgresql.conf
 
 Your database should be configured to enable logical replication.
 
+* Property **listen_addresses** should be set to the host name or IP to listen to.
 * Property **max_wal_senders** should be at least equal to the number of replication consumers.
-* Property **wal_keep_segments** should contain count wal segments that can't be removed from database.
+* Property **wal_keep_segments**, or **wal_keep_size** for PostgreSQL 13+, should contain count wal segments that can't be removed from database.
 * Property **wal_level** for logical replication should be equal to logical.
 * Property **max_replication_slots** should be greater than zero for logical replication, because logical replication can't work without replication slot.
 
 Example:
 ```
+listen_addresses = '*'            # listen all network interfaces
 max_wal_senders = 4             # max number of walsender processes
-wal_keep_segments = 4           # in logfile segments, 16MB each; 0 disables
+wal_keep_size = 4           # in logfile segments, 16MB each; 0 disables
 wal_level = logical             # minimal, replica, or logical
 max_replication_slots = 4       # max number of replication slots
 ```
@@ -90,7 +92,7 @@ String database = "test"; 			// PostgreSQL database
 String user = "postgres"; 			// PostgreSQL username
 String password = ""; 				// PostgreSQL password
 String publication = "cidade_pub"; 		// PostgreSQL publication name
-String slot = "slot_teste_cidade_pub"; 		// PostgreSQL slot name (OPTIONAL, DEFAULT "easy_slot_" + publication name)
+String slot = "slot_teste_cidade_pub"; 		// PostgreSQL slot name (OPTIONAL, DEFAUL "easy_slot_" + publication name)
 
 PGEasyReplication pgEasyReplication = new PGEasyReplication(server, database, user, password, publication, slot);
 ```
@@ -168,7 +170,7 @@ In our environment, if you wish, you can adjust UnitTest.java file to run a simp
 License
 =======
 
-> Copyright (c) 2018-2021, Davy Alvarenga Machado
+> Copyright (c) 2018-2020, Davy Alvarenga Machado
 > All rights reserved.
 
 > Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
