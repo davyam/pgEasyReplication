@@ -31,9 +31,9 @@ Your database should be configured to enable logical replication.
 
 Example:
 ```
-listen_addresses = '*'            # listen all network interfaces
-max_wal_senders = 4             # max number of walsender processes
-wal_keep_size = 4           # in logfile segments, 16MB each; 0 disables
+listen_addresses = '*'			# listen all network interfaces
+max_wal_senders = 4				# max number of walsender processes
+wal_keep_size = 4				# in logfile segments, 16MB each; 0 disables
 wal_level = logical             # minimal, replica, or logical
 max_replication_slots = 4       # max number of replication slots
 ```

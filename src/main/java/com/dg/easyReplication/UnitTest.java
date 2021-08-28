@@ -11,12 +11,37 @@ public class UnitTest {
 
     public static void main(String[] args) {
         try {
+        	
+        	/* ***************************************************************************
+        	 * 
+        	 * Creating database, table and publication
+        	 * ATENTION: Before, perform the settings described in README
+        	 * 
+        	 * ***************************************************************************
 
-            // OBS: Execute the pre_unit_test_postgresql.sql script on database before this test!
+				$ psql
+				  
+					CREATE DATABASE test;
+					
+					\c test
+					
+					CREATE TABLE cidade (
+						codigo int not null,
+						data_fund date not null,
+						nome text
+					);
+					
+					ALTER TABLE cidade REPLICA IDENTITY FULL;
+					
+					INSERT INTO cidade VALUES (1, '1554-01-25', 'SAO PAULO'), (2, '1960-04-21', 'BRASILIA'), (3, '1565-03-01', 'RIO DE JANEIRO');
+					
+					CREATE PUBLICATION cidade_pub FOR TABLE cidade;
+
+        	 * ***************************************************************************/
 
             // Parameters (REPLACE VALUES)
 
-            String server = "192.168.32.51:5432"; // PostgreSQL server (host:port)
+            String server = "192.168.200.121:5432"; // PostgreSQL server (host:port)
             String database = "test"; // PostgreSQL database
             String user = "postgres"; // PostgreSQL username
             String password = ""; // PostgreSQL password
