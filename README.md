@@ -165,7 +165,7 @@ Output with isSimpleEvent = false:
 {"tupleData":{"values":"(20,1929-10-19,TERRA DO PAO DE QUEIJO)","numColumns":3},"relationId":16385,"tupleType":"O","type":"delete"}
 ```
 ----------
-In our environment, if you wish, you can adjust UnitTest.java file to run a simple unit dev test.
+In your IDE, if you wish, you can adjust UnitTest.java file to run a simple unit test.
 
 License
 =======
