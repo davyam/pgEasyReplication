@@ -1,6 +1,9 @@
-# pgEasyReplication
 
-**THIS CODE IS OUT OF DATE! AS SOON AS POSSIBLE IT WILL BE UPDATED WITH THE IMPROVEMENTS MADE FOR APACHE NIFI CAPTURECHANGEPOSTGRESQL PROCESSOR.**
+# THIS CODE IS OUT OF DATE! 
+
+**AS SOON AS POSSIBLE IT WILL BE UPDATED WITH THE IMPROVEMENTS MADE FOR APACHE NIFI CAPTURECHANGEPOSTGRESQL PROCESSOR.**
+
+# pgEasyReplication
 
 pgEasyReplicaton is a Java library to capture data changes (INSERT/UPDATE/DELETE) in PostgreSQL tables via Logical Replication. Also, this library provides snapshots of all published tables.
 
